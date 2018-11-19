@@ -1,0 +1,52 @@
+#infobox{
+    position: absolute;
+    left: 2%;
+    top:3%;;
+    height:60%;
+    width: 350px;
+    border-radius: 6px;
+}
+/* label color */
+
+/* label focus color */
+
+.login-icons{
+    padding-left:0;
+    margin-left: 0;
+}
+
+.input-field input[type=text]:focus + label {
+color: #000;
+}
+/* label underline focus color */
+.input-field input[type=text]:focus {
+border-bottom: 1px solid #000;
+box-shadow: 0 1px 0 0 #000;
+}
+/* valid color */
+.input-field input[type=text].valid {
+border-bottom: 1px solid #000;
+box-shadow: 0 1px 0 0 #000;
+}
+/* invalid color */
+.input-field input[type=text].invalid {
+border-bottom: 1px solid #000;
+box-shadow: 0 1px 0 0 #000;
+}
+/* icon prefix focus color */
+.input-field .prefix.active {
+color: #000;
+}
+    
+.postrow{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+tr>.first{
+    padding-left: 20px;
+}
+
+thead>tr>th{
+    border-radius: 0;
+}

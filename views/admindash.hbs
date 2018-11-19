@@ -1,0 +1,116 @@
+<head>
+    {{> head }}
+</head>
+<body>
+    
+  <ul id="slide-out" class="sidenav" style="width: 240px;transform: translateX(0px);">
+    <li><div class="user-view" style="height: 130px; margin-bottom: 0;">
+    <div class="background" >
+        <img style="width: 100%" src="/pexelsglo.jpeg">
+      </div>
+      <a href="#name"><span class="white-text name">Admin</span></a>
+      <a href="#email"><span class="white-text email">jdandturk@gmail.com</span></a>
+    </div></li>
+    <li>
+        <a href="/" class="grey-text text-darken-2" style="margin-left: -20px;">
+            <i class="material-icons" style="margin-right: 8px;">chevron_left</i>
+            Return Home</a>
+    </li>
+  </ul>
+
+    <div class="maincontent" style="margin-bottom: 0; margin-left: 240px;">
+        <div class="row" style="margin-bottom: 0;">
+        <form class="col s6" action="/api/atlas" method="post">
+                <div class="card-panel" style="margin-bottom: 0;">
+                    <h5 style="margin-top: 0;">Add Entries</h5>
+                    <div class="row postrow">
+                        <div class="input-field col s12 postrow">
+                            <input id="name" name="name" type="text" data-length="60">
+                            <label for="name">Name</label>
+                        </div>
+                    </div>
+                    <div class="row postrow">
+                        <div class="input-field col s12 postrow">
+                            <textarea id="description" name="description" class="materialize-textarea" data-length="300"></textarea>
+                            <label for="description">Description</label>
+                        </div>
+                    </div>
+                    <div class="row postrow">
+                        <div class="input-field col s12 postrow">
+                            <textarea id="location" name="location" class="materialize-textarea" type="text" data-length="255"></textarea>
+                            <label for="location">Location</label>
+                        </div>
+                    </div>
+                    <div class="row postrow">
+                        <div class="input-field col s12 postrow">
+                            <input id="latitude" name="latitude" type="text" data-length="60">
+                            <label for="latitude">Latitude</label>
+                        </div>
+                    </div>
+                    <div class="row postrow">
+                        <div class="input-field col s12 postrow">
+                            <input id="longitude" name="longitude" type="text" data-length="60">
+                            <label for="longitude">Longitude</label>
+                        </div>
+                    </div>
+                    <a id="latlong-lookup" class="waves-effect waves-light btn">get lat long</a>
+
+                    <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+                    </button>                
+            </div>
+        </form>
+        <script>
+            $(document).ready(function(){
+                $.getJSON('/getlocations', function(data) {
+                    for(var i = 0; i <data.length; i++){
+                        $('tbody').append('<tr class="databaseElement modal-trigger" href="#modal1"><td class="first">'+data[i].name+'</td><td></td></tr>');
+                    }
+                    $(".databaseElement").click(function(){
+                        $("#modal-content>h4").data();
+                    });
+                })
+                $("#latlong-lookup").click(function(){
+                    var link = "https://maps.googleapis.com/maps/api/geocode/json?address=" + $('#location').val() + "&key=AIzaSyAOx_n34yHgoKGkP7bcfpCRf6Ojm_f1lOU";
+                    console.log(link);
+                    $.getJSON(link, function(data) {
+                        $("label[for='latitude']").addClass('active');
+                        $("label[for='longitude']").addClass('active');
+                        $('#latitude').val(data.results[0].geometry.location.lat);
+                        $('#longitude').val(data.results[0].geometry.location.lng);
+                    })
+         
+                })
+            });
+        </script>
+
+        </div>
+        <div id="modal1" class="modal">
+            <div class="modal-content">
+            <h4></h4>
+            <p></p>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+ 
+        <div class="row" style="margin-top: 0px;">
+            <div class="col s12">
+                    <div class="card-panel" style="padding:0px;">
+                        <table class="highlight" style="margin-top : 0; padding: px; ">
+                        <thead style="" class="blue white-text">
+                            <th class="first">Name</th>
+                            <th>Product</th>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                    </div>
+                    
+            </div>
+
+        </div>
+
+    </div>
+    {{> footer }}
+</body>

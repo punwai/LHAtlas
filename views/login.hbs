@@ -1,0 +1,59 @@
+<head>
+    {{> head }}
+</head>
+<body>
+    <div style="z-index: -1;position: absolute;width:100%; height:40%; top:0;" class="z-depth-2 teal">
+
+    </div>
+    
+    <div class="valign-wrapper" style="height: 100%; width: 100%;">
+        <div class="row" style="margin-bottom: 0;">
+            <div class="col s2"></div>
+            <div class="col s8">
+                <div class="card-panel" style="padding-left: 50px; padding-right:50px;" class="z-depth-5">
+                    <h3 class="form-signin-heading" style="margin-bottom: 40px; font-weight: 600; text-align: center;">
+                        Admin Signin
+                    </h3>
+                    <form id="loginform" action="/login" method="post" class="form-signin" style="">
+
+                        <p id="message" style="color:red">{{message}}</p>
+                        <div class="row">
+                            <div class="input-field col s12" style="padding-left:0;">
+                                <i class="material-icons prefix">account_circle</i>
+                                <input id="username" type="text" class="form-control" name="username" placeholder="Username">
+                                <label for="username">Username</label>
+                            </div>
+                            <div class="input-field col s12" style="padding-left:0;">
+                                <i class="login-icons material-icons prefix">lock</i>
+                                <input id="password" type="text" class="form-control" name="password" placeholder="Password">
+                                <label for="password">Password</label>
+                            </div>
+                            <div>
+                                <button class="btn waves-effect orange waves-light" style="width: 100%; padding-left: 20px;" type="submit" name="action">Login
+                                </button> 
+                                
+                                <script>
+                                    $(document).ready(function(){
+                                        $("#latlong-lookup").click(function(){
+                                            var link = "https://maps.googleapis.com/maps/api/geocode/json?address=" + $('#location').val() + "&key=AIzaSyAOx_n34yHgoKGkP7bcfpCRf6Ojm_f1lOU";
+                                            $.getJSON(link, function(data) {
+                                                $("label[for='latitude']").addClass('active');
+                                                $("label[for='longitude']").addClass('active');
+                                                $('#latitude').val(data.results[0].geometry.location.lat);
+                                                $('#longitude').val(data.results[0].geometry.location.lng);
+                                            })
+                                                
+                                        })
+                                    });
+                                </script>                       
+                            </div>
+                        </div>
+                
+                    </form>
+                </div>
+            </div>
+            <div class="col s2"></div>
+        </div>
+    </div>
+    {{> footer }}
+</body>
