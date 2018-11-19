@@ -14,7 +14,7 @@
                     <h3 class="form-signin-heading" style="margin-bottom: 40px; font-weight: 600; text-align: center;">
                         Admin Signin
                     </h3>
-                    <form id="loginform" action="/login" method="post" class="form-signin" style="">
+                    <form id="loginform" class="form-signin" style="">
 
                         <p id="message" style="color:red">{{message}}</p>
                         <div class="row">
@@ -29,23 +29,56 @@
                                 <label for="password">Password</label>
                             </div>
                             <div>
-                                <button class="btn waves-effect orange waves-light" style="width: 100%; padding-left: 20px;" type="submit" name="action">Login
-                                </button> 
+                            </div>
+                            <div>
+                                <div id="loginsubmit" class="btn waves-effect orange waves-light" style="width: 100%; padding-left: 20px;">Login
+                                </div> 
                                 
                                 <script>
                                     $(document).ready(function(){
-                                        $("#latlong-lookup").click(function(){
-                                            var link = "https://maps.googleapis.com/maps/api/geocode/json?address=" + $('#location').val() + "&key=AIzaSyAOx_n34yHgoKGkP7bcfpCRf6Ojm_f1lOU";
-                                            $.getJSON(link, function(data) {
-                                                $("label[for='latitude']").addClass('active');
-                                                $("label[for='longitude']").addClass('active');
-                                                $('#latitude').val(data.results[0].geometry.location.lat);
-                                                $('#longitude').val(data.results[0].geometry.location.lng);
-                                            })
-                                                
-                                        })
+                                        $('#loginform').validate({ // initialize the plugin
+                                            rules: {
+                                                username: {
+                                                    required: true,
+                                                },
+                                                password: {
+                                                    required: true
+                                                }
+                                            }
+                                        });
+                                        
+                                        
+                                        $('#loginsubmit').click(function(){
+                                            var formdata = $("#loginform").serialize();
+
+                                            $.ajax({
+                                                type: "POST",
+                                                url: "/login",
+                                                data: formdata,
+                                                success: function(resdata){
+                                                    var parsed = JSON.parse(resdata);
+                                                    if(parsed.status == "success"){
+                                                        console.log(parsed)
+                                                        window.sessionStorage.setItem('access_token', parsed.access_token);
+                                                        console.log(window.sessionStorage.getItem('access_token'));
+                                                    }else{
+                                                        location.reload();
+                                                    }
+                                       
+                                                },           
+                                                error: function()
+                                                {
+                                                alert("Request Failed");
+                                                }
+
+                                            });
+                                            return false;
+                                        });
+
                                     });
-                                </script>                       
+                                </script>   
+                                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.js"></script>
+
                             </div>
                         </div>
                 
@@ -53,6 +86,7 @@
                 </div>
             </div>
             <div class="col s2"></div>
+            
         </div>
     </div>
     {{> footer }}

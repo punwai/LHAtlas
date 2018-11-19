@@ -1,0 +1,275 @@
+<head>
+    {{> head }}
+</head>
+<body>
+    {{> adminnav }}
+    <div class="maincontent" style="margin-bottom: 0; margin-left: 240px;">
+        <div class="row" style="margin-bottom: 0;">
+        </div>
+        <div id="addproductmodal" class="modal">
+            <form action="/api/products" method="post" id="addproductmodal">
+            <div class="modal-content">
+                <h5>Adding New Product</h5>
+                <br>
+                <div class="row postrow">
+                    <div class="input-field col s12 postrow">
+                        <textarea id="location" name="name" class="materialize-textarea" type="text" data-length="255"></textarea>
+                        <label for="location">Product Name</label>
+                    </div>
+                </div>
+                <div class="row postrow">
+                    <div class="input-field col s12 postrow">
+                        <textarea id="location" name="description" class="materialize-textarea" type="text" data-length="255"></textarea>
+                        <label for="location">Description</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s7">
+                        <div class="input-field col s12">
+                            <input type="color" id="pcolor" name="marker_pcolor" value="#e66465">
+                            <label style="position: relative" for="editpcolor">Marker Primary Color</label>
+                        </div>
+                        <div class="input-field col s12">
+                            <input type="color" id="scolor" name="marker_scolor" value="#e66465">
+                            <label style="position: relative" for="editscolor">Marker Secondary Color</label>
+                        </div>
+
+
+                    </div>
+                    <div class="col s5">
+                        <svg version="1.1"
+                            id="Layer_1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24"
+                            style="enable-background:new 0 0 24 24;" xml:space="preserve">
+                        <style type="text/css">
+                            .display0{fill:#E74C3C;}
+                            .display1{fill:#C0392B;}
+                        </style>
+                        <g transform="translate(0 -1028.4)">
+                            <path class="display0" d="M12,1028.4c-4.4,0-8,3.6-8,8c0,1.4,0.4,2.8,1,3.9c0.1,0.2,0.2,0.4,0.3,0.6l6.6,11.5l6.6-11.5
+                                c0.1-0.2,0.2-0.3,0.3-0.5l0.1-0.1c0.6-1.2,1-2.5,1-3.9C20,1032,16.4,1028.4,12,1028.4z M12,1032.4c2.2,0,4,1.8,4,4c0,2.2-1.8,4-4,4
+                                c-2.2,0-4-1.8-4-4C8,1034.2,9.8,1032.4,12,1032.4z"/>
+                            <path class="display1" d="M12,1031.4c-2.8,0-5,2.2-5,5c0,2.8,2.2,5,5,5c2.8,0,5-2.2,5-5C17,1033.6,14.8,1031.4,12,1031.4z"/>
+                        </g>
+                        </svg>
+
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+            
+                <button type="submit" id="productsubmit" class="btn waves-effect waves-light">Submit
+                </button>                
+            </div>
+            </form>
+        </div>
+
+        <div id="editproductmodal" class="modal">
+            <form id="editproductform">
+            <div class="modal-content row" style="padding-top: 10px; padding-bottom: 0;">
+                <h5>Editing Product</h5>
+                <div class="input-field col s12">
+                    <input name="name" value="N/A" id="editname" type="text" class="validate">
+                    <label class="active" for="editname">Name</label>
+                </div>
+                <div class="input-field col s12">
+                    <input name="description" value="N/A" id="editdescription" type="text" class="validate">
+                    <label class="active browser-default" for="editdescription">Description</label>
+                </div>
+                <div class="row">
+                    <div class="col s7">
+                        <div class="input-field col s12">
+                            <input type="color" id="editpcolor" name="marker_pcolor" value="#e66465">
+                            <label style="position: relative" for="head">Marker Primary Color</label>
+                        </div>
+                        <div class="input-field col s12">
+                            <input type="color" id="editscolor" name="marker_scolor" value="#e66465">
+                            <label style="position: relative" for="head">Marker Secondary Color</label>
+                        </div>
+
+                    </div>
+                    <div class="col s5">
+                        <svg version="1.1"
+                            id="Layer_1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24"
+                            style="enable-background:new 0 0 24 24;" xml:space="preserve">
+                        <style type="text/css">
+                            .display0{fill:#E74C3C;}
+                            .display1{fill:#C0392B;}
+                        </style>
+                        <g transform="translate(0 -1028.4)">
+                            <path class="display0" d="M12,1028.4c-4.4,0-8,3.6-8,8c0,1.4,0.4,2.8,1,3.9c0.1,0.2,0.2,0.4,0.3,0.6l6.6,11.5l6.6-11.5
+                                c0.1-0.2,0.2-0.3,0.3-0.5l0.1-0.1c0.6-1.2,1-2.5,1-3.9C20,1032,16.4,1028.4,12,1028.4z M12,1032.4c2.2,0,4,1.8,4,4c0,2.2-1.8,4-4,4
+                                c-2.2,0-4-1.8-4-4C8,1034.2,9.8,1032.4,12,1032.4z"/>
+                            <path class="display1" d="M12,1031.4c-2.8,0-5,2.2-5,5c0,2.8,2.2,5,5,5c2.8,0,5-2.2,5-5C17,1033.6,14.8,1031.4,12,1031.4z"/>
+                        </g>
+                        </svg>
+
+                    </div>
+                </div>
+            
+
+            </div>
+            <div class="modal-footer">
+                <div id="producteditsubmit" class="btn waves-effect waves-light">Submit
+                </div>                
+
+
+            </div>
+            </form>
+        </div>
+
+        <div id="addversionmodal" class="modal">
+            <form id="addversionform">
+            <div class="modal-content">
+                <h5>Adding New Product Version</h5>
+                <br>
+                <div class="row postrow">
+                    <div class="input-field col s12 postrow">
+                        <textarea id="location" name="versionname" class="materialize-textarea" type="text" data-length="255"></textarea>
+                        <label for="location">Product Version</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            
+                <div id="versionsubmit" class="btn waves-effect waves-light">Submit
+                </div>                
+            </div>
+            </form>
+        </div>
+
+        <div class="row" style="margin-top: 0px;">
+            <div class="col s12">
+                    <div class="card-panel" style="padding:0px;">
+                        <table class="highlight" style="margin-top : 0; padding: px; ">
+                            <thead style="" class="blue white-text">
+                                <th class="first">ProductID</th>
+                                <th>Product Name</th>
+                                <th></th>
+                            </thead>
+                            <tbody id="mainproductbody">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <button class="btn waves-effect waves-light modal-trigger" href="#addproductmodal"  name="action">Add Product
+                    </button>                                
+            </div>
+            <div class="col s12">
+                <h5>Product Versions</h5>
+                <div class="card-panel" style="padding: 0">
+                    <table class="highlight" style="margin-top : 0; padding: px; ">
+                        <thead style="" class="blue white-text">
+                            <th class="first">Version ID</th>
+                            <th>Version Name</th>
+                        </thead>
+                        <tbody id="versionbody">
+                            
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn waves-effect waves-light modal-trigger" href="#addversionmodal" name="action">Add Version
+                </button>  
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            editpColor = document.querySelector("#editpcolor");
+            editsColor = document.querySelector("#editscolor");
+            editpColor.addEventListener("input", updateEditPSVG, false);
+            editpColor.addEventListener("change", updateEditPSVG, false);
+            editpColor.select();
+
+            editsColor.addEventListener("input", updateEditSSVG, false);
+            editsColor.addEventListener("change", updateEditSSVG, false);
+            editsColor.select();
+
+            addpColor = document.querySelector("#pcolor");
+            addsColor = document.querySelector("#scolor");
+            addpColor.addEventListener("input", updateEditPSVG, false);
+            addpColor.addEventListener("change", updateEditPSVG, false);
+            addpColor.select();
+
+            addsColor.addEventListener("input", updateEditSSVG, false);
+            addsColor.addEventListener("change", updateEditSSVG, false);
+            addsColor.select();
+
+
+
+            function updateEditPSVG(event){
+                var p = $(".display0");
+                if(p){
+                    p.css("fill", event.target.value);
+                }
+            }
+            function updateEditSSVG(event){
+                var s = $(".display1");
+                if(s){
+                    s.css("fill", event.target.value);
+                }
+                console.log('in change')
+            }
+                
+            $.getJSON('/api/products', function(data) {
+                
+                for(var i = 0; i <data.length; i++){
+                    $('#mainproductbody').append('<tr class="databaseElement" data-productindex="'+i+'" data-productid="' + data[i].product_id +'" href="#modal1"><td class="first">'+data[i].product_id+'</td><td>'+data[i].product_name+'</td><td style="padding: 2px;"><div style="margin-right: 5px;" href="#editproductmodal" class="editproductbtn modal-trigger btn right waves-effect orange waves-light">EDIT</div></td></tr>');
+                }
+                $(".editproductbtn").click(function(){
+                    let current = ($(this).parent().parent());
+                    $("#editname").val(data[current.data('productindex')].product_name); 
+                    $("#editdescription").val(data[current.data('productindex')].product_desc);      
+                    $("#editpcolor").val(data[current.data('productindex')].marker_pcolor);   
+                    $("#editscolor").val(data[current.data('productindex')].marker_scolor);   
+                    $("#editproductmodal").val(current.data('productid')); 
+                    $(".display0").css("fill", data[current.data('productindex')].marker_pcolor);  
+                    $(".display1").css("fill", data[current.data('productindex')].marker_scolor);                                                                                                                                                                                                            
+                });
+                $(".databaseElement").click(function(){
+                    $("#addversionmodal").data("productid",$(this).data('productid'))
+                    $.getJSON('/api/versions/' + $(this).data('productid'), function(versiondata) {
+                        $("#versionbody").empty();
+                        for(var j = 0; j <versiondata.length; j++){
+                            $("#versionbody").append('<tr class="versionElement" href="#modal1"><td class="first">'+versiondata[j].id+'</td><td>'+versiondata[j].name+'</td></tr>');
+                        }
+                    });
+                });
+            })
+            $("#versionsubmit").click(function(){
+                var formdata = $("#addversionform").serialize();
+                console.log('submitting')
+                console.log($("#addversionmodal").data("productid"));
+                $.ajax({
+                    url: "/api/versions/" + $("#addversionmodal").data("productid"),
+                    type: 'POST',
+                    data: formdata,
+                    success: function(){
+                        console.log('success!!');
+                    }
+                });
+
+                location.reload();
+                
+            });
+
+            $("#producteditsubmit").click(function(){
+                var formdata = $("#editproductform").serialize();
+                $.ajax({
+                    url:  "/api/products/" + $("#addversionmodal").data("productid"),
+                    type: 'PUT',
+                    data: formdata,
+                    success: function(){
+                        console.log('success!!');
+                    }
+
+                })
+                location.reload();
+            })
+        });
+        
+    </script>
+    {{> footer }}
+</body>

@@ -2,185 +2,79 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var http = require('http').Server(app);
-const PORT = process.env.PORT || 3000;
-const LocalStrategy = require('passport-local').Strategy;
-var sess  = require('express-session');
-var passport = require('passport')
-var flash = require('connect-flash');
+const PORT = process.env.PORT || 4000;
 var hbs = require('hbs');
 var jwt = require('jsonwebtoken');
-var bcrypt = require('bcryptjs');
-var config = require('./config');
-const JWTstrategy = require('passport-jwt').Strategy;
-const ExtractJWT = require('passport-jwt').ExtractJwt;
-
+require('dotenv').config()
+var bcrypt = require('bcrypt');
+var config = require('./configfiles/config');
+const bodyParser = require('body-parser');
+var flash = require('connect-flash');
+var db = require('./configfiles/db')
+const expressValidator = require('express-validator');
+var passport = require('./configfiles/auth')(db, app);
 
 hbs.registerPartials(__dirname + '/views/partials');
-app.use(express.static(path.join(__dirname, 'css')));
-
-const bodyParser = require('body-parser');
+app.use(express.static(path.join(__dirname, 'staticfiles')));
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
-
-var db = require('./db')
-
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-
-app.set('Secret', config.secret);
 app.use(flash());
 app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.session());  
+app.use(expressValidator());
+
+var apiroute = require('./routers/api')(db, app);
 
 
-var apiroute = express.Router();
-
-passport.use('login', new LocalStrategy(
-  function(username, password, done) {
-    db.query("select * from User where username = ?", [username], function(err, rows){
-      if(err){
-        return done(null, false, {message: "Error"});
-      }
-      if(!rows.length){ return done(null, false, {message: "User does not exist"})}
-      else{
-        var dbPassword  = rows[0].password;
-        if(dbPassword == password){
-          const payload = {
-            check: true
-          };
-          var token = jwt.sign(payload, app.get('Secret'), {
-            expiresIn: 1440
-          });
-          return done(null, rows[0], {message: "Logged In"});
-        }else{
-          return done(null, false, {message: "Please check your password"});
-        }
-      }
-    });
-  }
-));
-
-passport.use('register', new LocalStrategy(
-  function(username, password, done) {
-
-    var values = [
-      [username, password]
-    ]
-    db.query("select * from User where username = ?", [username], function(err, rows){
-      if(!rows.length){
-      sql = "INSERT INTO User (username, password) VALUES ?";
-      db.query(sql, [values], function(err, rows){
-        if (err) done(error);
-        return done(null, username);
-      });
-      }
-      else{
-        return done(null, false, {message: "username taken"});
-      }
-    });
-  }
-));
-
-app.get('/login', function(req, res){
-  res.render('login');
-});
+var admin = express.Router();
 
 
-
-var get_cookies = function(request) {
-  var cookies = {};
-  request.headers && request.headers.cookie.split(';').forEach(function(cookie) {
-    var parts = cookie.match(/(.*?)=(.*)$/)
-    cookies[ parts[1].trim() ] = (parts[2] || '').trim();
-  });
-  return cookies;
-};
-
-var cookieExtractor = function(req) {
-  var token = null;
-  token =  get_cookies(req)['authtoken'];
-  console.log(token);
-  return token;
-};
-
-passport.use('jwtadmin', new JWTstrategy({
-  secretOrKey: app.get("Secret"),
-  jwtFromRequest : cookieExtractor
-}, async (token, done) => {
-  try {
-      return done(null, token.user);
-    
-  } catch (error) {
-    done(error);
-  }
-}));
-
-apiroute.post('/atlas', (req,res) => {
-  var sql = "INSERT INTO atlas (name, description, location, latitude, longitude) VALUES ?";
-  var values = [
-    [req.body.name, req.body.description, req.body.location, req.body.latitude, req.body.longitude]
-  ]
-  db.query(sql, [values], function(err,data){
-    if (err) throw err;
-    res.redirect('/api/admin');
-    console.log("Number of records inserted: " + data.affectedRows);
-  });
-});
-
-apiroute.get('/atlas', (req,res) => {
-  db.query('SELECT * FROM atlas ', function (err, rows, fields) {
-    var objs=[];
-    console.log(rows.length);
-    for(var i = 0; i <rows.length; i++){
-      objs.push({id: rows[i].ID ,name: rows[i].name, description: rows[i].description, location: rows[i].location, latitude: rows[i].latitude, longitude: rows[i].longitude});
-    }
-    res.end(JSON.stringify(objs));
-  })
-})
-
-app.get('/admin', function(req, res) {
-  res.redirect('/api/admin');
-});
-
-apiroute.get('/atlas/:id', (req,res) => {
-  var id = req.params.id;
-  db.query('SELECT * FROM atlas WHERE ID = ' + id, function (err, rows, fields) {
-    var objs=[];
-    if(!rows.length){
-      objs.push({status: "not found"});
-    }
-    for(var i = 0; i <rows.length; i++){
-      objs.push({id: rows[i].ID ,name: rows[i].name, description: rows[i].description, location: rows[i].location, latitude: rows[i].latitude, longitude: rows[i].longitude});
-    }
-    res.end(JSON.stringify(objs));
-  })
-})
-
-
-
-apiroute.get('/admin', function(req,res){
+admin.get('/',  function(req,res){
   res.render('admindash')
 })
 
+admin.get('/products', function(req,res){
+  res.render('adminproduct')
+})
+
 app.use('/api', passport.authenticate('jwtadmin', { session : false }), apiroute);
+app.use('/admin', passport.authenticate('jwtadmin', { session : false, failureRedirect: '/denied'}), admin);
+
+app.get('/denied', function(req,res){
+  res.render('denied');
+});
+
+app.get('/login', function(req, res){
+  res.render('login', {message: req.session.message});
+});
+
 
 
 app.post('/login', async (req, res, next) => {
-  passport.authenticate('login', async (err, user, info) => {     
+  passport.authenticate('login', (err, user, info) => {     
     try {
       if(err || !user){
-        return res.json({status: "failed"});
+        if(err){
+          console.log(err);
+        }
+        req.session.message = info.message;
+        res.end(JSON.stringify({"status": "failed"}));
       }
-      req.login(user, { session : false }, async (error) => {
+      req.login(user, { session : false,
+        failureFlash : true
+      }, async (error) => {
         if( error ) return next(error)
-        const body = { _id : user._id};
+        const body = { _id : user.id};
         const token = jwt.sign({ user : body },app.get('Secret'));
-        res.cookie('id_token' ,token, {expires: new Date(Date.now() + 900000), httpOnly: true, secure: true });
-        res.redirect('/api/admin');
+        console.log(token);
+        // res.cookie('authtoken' ,token, {expires: new Date(Date.now() + 900000), httpOnly: true});
+        // res.redirect('/admin');
+        res.end(JSON.stringify({"access_token": token, "status": "success"}));
       });     
     } catch (error) {
-      return next(error);
+      return next(err);
     }
   })(req, res, next);
 });
@@ -191,22 +85,6 @@ const googleMapsClient = require('@google/maps').createClient({
 });
 
 
-
-//Routing
-
-// passport.serializeUser(function(user, cb) {
-//   cb(null, user.id);
-// });
-
-
-// passport.deserializeUser(function(id, cb) {
-//   db.query("select * from user where id = "+ id, function (err, rows){
-
-//       cb(err, rows[0]);
-
-//   });
-// });
-
 app.get('/', function(req, res){
     res.render('index');
 });
@@ -215,8 +93,23 @@ app.get('/signup', function(req, res){
   res.render('registration');
 })
 
-app.post('/signup', passport.authenticate('register', { session : false,    failureRedirect : '/signup',
-}) , function (req, res){
+
+function checkReg(req, res, next){
+  req.body.username.trim();
+  req.body.password.trim();
+  req.checkBody('username', 'Username is required').notEmpty();
+  req.checkBody('password', 'Password is required').notEmpty();
+  //validate 
+  var errors = req.validationErrors();
+  if (errors) {
+      res.render('registration',{user:null,frm_messages:errors});
+  } else {
+    next();
+  }
+}
+
+app.post('/signup', [checkReg, passport.authenticate('register', { session : false,    failureRedirect : '/signup',
+})], function (req, res){
   res.json({ 
     message : 'Signup successful',
     user : req.user
@@ -224,16 +117,59 @@ app.post('/signup', passport.authenticate('register', { session : false,    fail
 });
 
 
+
 app.get('/getlocations', (req,res) => {
-  db.query('SELECT * FROM atlas ', function (err, rows, fields) {
-    var objs=[];
-    console.log(rows.length);
-    for(var i = 0; i <rows.length; i++){
-      objs.push({name: rows[i].name, description: rows[i].description, location: rows[i].location, latitude: rows[i].latitude, longitude: rows[i].longitude});
+  db.getConnection(function(err,connection){
+    if (err) throw err;
+    connection.query('SELECT * FROM atlas ', function (error, rows, fields) {
+    if(rows=== undefined){
+      res.send("DB Error")
+    }else{
+      var objs=[];
+      var pending = rows.length;
+      for(var i = 0; i <rows.length; i++){
+        let products = [];
+        let currentRow = rows[i];
+        connection.query('SELECT P.product_id, version_name, product_name FROM versionatlas As VA INNER JOIN versions AS V on V.version_id = VA.version_id INNER JOIN products AS P on P.product_id = V.product_id where atlas_id = ?',[[currentRow.id]], function (error2, rows2, fields2) {
+          console.log(currentRow);
+          if(rows2 === undefined){
+            console.log("can't access product database");
+          }else{
+
+            for(var j = 0; j <rows2.length; j++){
+              products.push({id: rows2[j].product_id, name: rows2[j].product_name, version: rows2[j].version_name});
+            }
+            var currentJson = currentRow;
+            currentJson["products"] = products;
+            objs.push(currentJson);  
+            if( 0 === --pending ){
+              res.end(JSON.stringify(objs));
+            }
+          }
+        });
+      }
     }
-    res.end(JSON.stringify(objs));
-  })
+    connection.release();
+    if(error){
+      res.send(error);
+    }
+
+    });
+  });
 })
+
+app.get('/getproducts', (req, res) => {
+  db.query("SELECT * FROM products",function(err,rows,fields){
+    if(err) throw err;
+    var objs= [];
+    if(rows){
+      res.end(JSON.stringify(rows));
+    }else{
+      res.end("DB Error");
+    }
+  });
+})
+
 
 http.listen(PORT, function(){
   console.log('listening on *:3000');
