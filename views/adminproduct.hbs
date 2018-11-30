@@ -127,7 +127,7 @@
                 <br>
                 <div class="row postrow">
                     <div class="input-field col s12 postrow">
-                        <textarea id="location" name="versionname" class="materialize-textarea" type="text" data-length="255"></textarea>
+                        <textarea id="location" name="name" class="materialize-textarea" type="text" data-length="255"></textarea>
                         <label for="location">Product Version</label>
                     </div>
                 </div>
@@ -216,12 +216,12 @@
             $.getJSON('/api/products', function(data) {
                 
                 for(var i = 0; i <data.length; i++){
-                    $('#mainproductbody').append('<tr class="databaseElement" data-productindex="'+i+'" data-productid="' + data[i].product_id +'" href="#modal1"><td class="first">'+data[i].product_id+'</td><td>'+data[i].product_name+'</td><td style="padding: 2px;"><div style="margin-right: 5px;" href="#editproductmodal" class="editproductbtn modal-trigger btn right waves-effect orange waves-light">EDIT</div></td></tr>');
+                    $('#mainproductbody').append('<tr class="databaseElement" data-productindex="'+i+'" data-productid="' + data[i].id +'" href="#modal1"><td class="first">'+data[i].id+'</td><td>'+data[i].name+'</td><td style="padding: 2px;"><div style="margin-right: 5px;" href="#editproductmodal" class="editproductbtn modal-trigger btn right waves-effect orange waves-light">EDIT</div></td></tr>');
                 }
                 $(".editproductbtn").click(function(){
                     let current = ($(this).parent().parent());
-                    $("#editname").val(data[current.data('productindex')].product_name); 
-                    $("#editdescription").val(data[current.data('productindex')].product_desc);      
+                    $("#editname").val(data[current.data('productindex')].name); 
+                    $("#editdescription").val(data[current.data('productindex')].description);      
                     $("#editpcolor").val(data[current.data('productindex')].marker_pcolor);   
                     $("#editscolor").val(data[current.data('productindex')].marker_scolor);   
                     $("#editproductmodal").val(current.data('productid')); 
@@ -229,7 +229,8 @@
                     $(".display1").css("fill", data[current.data('productindex')].marker_scolor);                                                                                                                                                                                                            
                 });
                 $(".databaseElement").click(function(){
-                    $("#addversionmodal").data("productid",$(this).data('productid'))
+                    console.log($(this).data('productid'));
+                    $("#addversionmodal").data('productid', $(this).data('productid'))
                     $.getJSON('/api/versions/' + $(this).data('productid'), function(versiondata) {
                         $("#versionbody").empty();
                         for(var j = 0; j <versiondata.length; j++){
@@ -250,7 +251,6 @@
                         console.log('success!!');
                     }
                 });
-
                 location.reload();
                 
             });

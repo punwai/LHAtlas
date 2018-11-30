@@ -74,20 +74,20 @@
                     console.log(data);
                     for(var i = 0; i <data.length; i++){
                         console.log('in');
-                        let currentgroup = 'selectgroup'+data[i].product_id;
-                        $('#productselect').append('<optgroup id="'+currentgroup+'" label="'+data[i].product_name+'"></optgroup>');
+                        let currentgroup = 'selectgroup'+data[i].id;
+                        $('#productselect').append('<optgroup id="'+currentgroup+'" label="'+data[i].name+'"></optgroup>');
                         for(var j = 0; j<data[i].versions.length; j++){
                             $('#'+currentgroup).append('<option value="' + data[i].versions[j].id+'">'+data[i].versions[j].name+'</option>');
                         }
 
-                        $('#modalproducts').append('<optgroup id="'+currentgroup+'" label="'+data[i].product_name+'"></optgroup>');
+                        $('#modalproducts').append('<optgroup id="'+currentgroup+'" label="'+data[i].name+'"></optgroup>');
                         for(var j = 0; j<data[i].versions.length; j++){
                             $('#modalproducts').append('<option value="' + data[i].versions[j].id+'">'+data[i].versions[j].name+'</option>');
                         }
 
                     }
                     $('select').formSelect();
-                })
+                });
                 $('#addentryform').validate({ // initialize the plugin
                     rules: {
                         name: {
@@ -144,7 +144,7 @@
                         var tempproduct = data[$(this).data('productid')].products;
                         var productslist = [];
                         for(var i = 0; i < tempproduct.length; i++){
-                            productslist.push(tempproduct[i].version_id);
+                            productslist.push(tempproduct[i].id);
                         }
                         console.log(productslist);
                         $('#modalproducts option').each(function() {

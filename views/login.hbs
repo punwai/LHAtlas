@@ -7,14 +7,14 @@
     </div>
     
     <div class="valign-wrapper" style="height: 100%; width: 100%;">
-        <div class="row" style="margin-bottom: 0;">
-            <div class="col s2"></div>
-            <div class="col s8">
-                <div class="card-panel" style="padding-left: 50px; padding-right:50px;" class="z-depth-5">
+        <div class="row" style="width: 100%; margin-bottom: 0;">
+            <div class="col s4"></div>
+            <div class="col s4" style="">
+                <div class="card-panel" style="margin-right: -30px; margin-left: -30px; padding-left: 50px; padding-right:50px;" class="z-depth-5">
                     <h3 class="form-signin-heading" style="margin-bottom: 40px; font-weight: 600; text-align: center;">
                         Admin Signin
                     </h3>
-                    <form id="loginform" class="form-signin" style="">
+                    <form id="loginform" class="form-signin" action="/login" method="post" style="">
 
                         <p id="message" style="color:red">{{message}}</p>
                         <div class="row">
@@ -31,8 +31,8 @@
                             <div>
                             </div>
                             <div>
-                                <div id="loginsubmit" class="btn waves-effect orange waves-light" style="width: 100%; padding-left: 20px;">Login
-                                </div> 
+                                <button id="loginsubmit" class="btn waves-effect orange waves-light" type="submit" style="width: 100%; padding-left: 20px;">Login
+                                </button> 
                                 
                                 <script>
                                     $(document).ready(function(){
@@ -48,7 +48,7 @@
                                         });
                                         
                                         
-                                        $('#loginsubmit').click(function(){
+                                        $('#ff').click(function(){
                                             var formdata = $("#loginform").serialize();
 
                                             $.ajax({
@@ -63,14 +63,12 @@
                                                         console.log(window.sessionStorage.getItem('access_token'));
                                                     }else{
                                                         location.reload();
-                                                    }
-                                       
+                                                    }                                       
                                                 },           
                                                 error: function()
                                                 {
                                                 alert("Request Failed");
                                                 }
-
                                             });
                                             return false;
                                         });
