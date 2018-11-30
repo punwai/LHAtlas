@@ -8,8 +8,7 @@ var jwt = require('jsonwebtoken');
 require('dotenv').config()
 const bodyParser = require('body-parser');
 var flash = require('connect-flash');
-var db = require('./config/db')
-var passport = require('./config/auth')(db, app);
+var passport = require('./config/auth')(app);
 const TodoItem = require('./models');
 const { check, validationResult } = require('express-validator/check');
 const Atlas = require('./models').Atlas;
@@ -28,7 +27,7 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());  
 
-var apiroute = require('./routes/api')(db, app);
+var apiroute = require('./routes/api')(app);
 
 
 var admin = express.Router();

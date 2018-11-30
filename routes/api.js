@@ -5,7 +5,7 @@ const Version = require('../models').Version;
 
 const { check, validationResult } = require('express-validator/check');
 
-module.exports = function(db, app){
+module.exports = function(app){
     var apiroute = express.Router();
     var emptyString = function(req, res, next){
         console.log(req.body);

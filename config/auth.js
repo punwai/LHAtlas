@@ -14,7 +14,7 @@ const User = require('../models').User;
 const { check, validationResult } = require('express-validator/check');
 
 
-module.exports = function(db, app){
+module.exports = function(app){
     app.set('Secret', process.env.jwtSecret);
     app.use(cookieParser('keyboard cat'));
     app.use(session({ cookie: { maxAge: 60000 }}));
