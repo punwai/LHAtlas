@@ -7,9 +7,7 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const db = {};
 const result = require('dotenv').config()
-if (result.error) {
-  throw result.error
-}
+
 console.log(process.env.DB_HOST)
 
 let sequelize;

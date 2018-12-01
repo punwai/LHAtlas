@@ -6,13 +6,12 @@
     width: 350px;
     border-radius: 6px;
 }
-/* label color */
 
 .leaflet-control-zoom{
     top: 50px;
 
 }
-/* label focus color */
+
 .smallmarginp{
     margin-top: 2px !important;
     margin-bottom: 4px !important;
@@ -22,11 +21,10 @@ label.error {
     color:red;
     font-size:14px;
     font-style:italic;
-    position: relative;  /* <- here */
-    top: 0px;           /* <- here */
-    left: 0px;        /* <- here */
+    position: relative;
+    top: 0px;
+    left: 0px;
 }
-
 
 #productselect{
     min-height:190px; 
@@ -37,6 +35,7 @@ label.error {
     display: contents;
 
 }
+
 .login-icons{
     padding-left:0;
     margin-left: 0;
@@ -47,11 +46,13 @@ label.error {
     max-height: 90% !important;
     top: 5% !important;
 }
+
 .fixed_header>tbody {
     display:block;
     height:330px;
     overflow:auto;
 }
+
 .fixed_header>thead, .fixed_header>tbody>tr {
     display:table;
     width:100%;
@@ -69,50 +70,51 @@ label.error {
 .searchinput>i{
     line-height: 1.3em;
 }
+
 .searchinput>label>i{
     line-height: 1.8em;
 }
+
 .searchinput{
     background: rgba(0,0,0,0.2);
     height: 40px;
     margin: 0;
+}
 
-}
 .input-field input[type=text]:focus + label {
-color: #000;
+    color: #000;
 }
-/* label underline focus color */
+
 .input-field input[type=text]:focus {
-border-bottom: 1px solid #000;
-box-shadow: 0 1px 0 0 #000;
+    border-bottom: 1px solid #000;
+    box-shadow: 0 1px 0 0 #000;
 }
-/* valid color */
+
 .input-field input[type=text].valid {
-border-bottom: 1px solid #000;
-box-shadow: 0 1px 0 0 #000;
+    border-bottom: 1px solid #000;
+    box-shadow: 0 1px 0 0 #000;
 }
-/* invalid color */
+
 .input-field input[type=text].invalid {
-border-bottom: 1px solid #000;
-box-shadow: 0 1px 0 0 #000;
+    border-bottom: 1px solid #000;
+    box-shadow: 0 1px 0 0 #000;
 }
-/* icon prefix focus color */
+
 .input-field .prefix.active {
-color: #000;
+    color: #000;
 }
-    
+
 .maincontent {
     margin-bottom: 0; 
     padding-left: 240px;
 }
-  
 
 @media only screen and (max-width : 992px) {
     .maincontent {
       padding-left: 0;
     }
-    .
 }
+
 .postrow{
     margin-top: 4px;
     margin-bottom: 4px;
@@ -135,10 +137,12 @@ thead>tr>th{
     margin-top: 150px;
     margin-left: 120px;
 }
+
 .custom-popup .leaflet-popup-content{
     width: 100% !important;
     margin: 0 !important;
 }
+
 .custom-popup .leaflet-popup-tip-container {
     width:20px;
     height:15px;
