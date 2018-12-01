@@ -1,156 +1,164 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <style>
-      /* Always set the map height explicitly to define the size of the div
+        /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
-      #map {
-        height: 100%;
-        z-index: 1;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      .legendmarkers {
-          width: 40px;
-      }
-      .legendtitles{
-          font-weight: 550;
-          font-size: 16px;
-      }
-      #legend{
-          border-radius: 2px;
-          padding-top: 0;
-      }
+        #map {
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .legendmarkers {
+            width: 40px;
+        }
+
+        .legendtitles {
+            font-weight: 550;
+            font-size: 16px;
+        }
+
+        #legend {
+            border-radius: 2px;
+            padding-top: 0;
+        }
     </style>
     {{> head }}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
-    integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-    crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin="" />
 
-  </head>
-  <body>
-    <nav style="height: 40px; z-index: 2; background: white; opacity: 0; position:absolute; width: 100%;">
-        <div class="nav-wrapper" style="line-height: 32px;">
-            <a href="">Home</a>
-        </div>
-    </nav>
+</head>
+
+<body>
+    {{> nav }}
+
     <div id="legend" class="card-panel" style="position: absolute; right: -500px;min-width: 200px; bottom: 10px; background: rgba(255,255,255,1); width: 24%; z-index: 20;">
         <h5 style="font-size: 20px; font-weight: 600; text-align: center;">LEGEND</h5>
     </div>
-    <span id="logospan" style="position: absolute; z-index: 4; top: 2px; left: -600px;"><img style="width: 30%; min-width: 300px;" src="/img/atlaslogo.png" alt=""></span>
-    <div id="map"class='custom-popup'>
+    <span id="logospan" style="position: absolute; z-index: 4; top: 48px; left: -600px;"><img style="width: 30%; min-width: 300px;"
+            src="/img/atlaslogo.png" alt=""></span>
+    <div id="map" class='custom-popup'>
     </div>
     <script>
-    $(document).ready(function(){
-        $("#tabclose").click(function(){
+        $(document).ready(function () {
+            $("#tabclose").click(function () {
+                $("#infobox").hide();
+            })
             $("#infobox").hide();
-         })
-        $("#infobox").hide();
-                var myLatLng = {lat: 20, lng: -20};
+            var myLatLng = { lat: 20, lng: -20 };
 
-        var markerTemplate = L.Icon.extend({
-            options: {
-                iconSize:     [38, 38],
-                shadowSize:   [50, 64],
-                iconAnchor:   [19, 38],
-                popupAnchor: [9, -38]
-            }
-        });
-        var mymap = L.map('map').setView([20, -20], 3);
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: 'mapbox.streets',
-            accessToken: 'pk.eyJ1IjoicHVud2FpIiwiYSI6ImNqb3c2eDV2MzAxM24za3BncmwwNmVqenQifQ._RX19AH6qY0c1r0YiM8Xag'
-        }).addTo(mymap);
-        var marker;
-        $.getJSON('/getproducts', function(productdata){
-            var colormap = {};
-            for(var i = 0; i < productdata.length; i++){
-                $("#legend").append('<div class="row valign-wrapper">'
-                +'<div class="col s9">'
-                +'<h5 class="legendtitles" style="margin: 0;">'+productdata[i].name+'</h5>'
-                +'</div>'
-                +'<div class="col s3">'
-                +   '<svg style="width: 40px" version="1.1" id="Layer_1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">'
-                +'<g transform="translate(0 -1028.4)"><path style="fill: '+productdata[i].marker_pcolor+'" d="M12,1028.4c-4.4,0-8,3.6-8,8c0,1.4,0.4,2.8,1,3.9c0.1,0.2,0.2,0.4,0.3,0.6l6.6,11.5l6.6-11.5c0.1-0.2,0.2-0.3,0.3-0.5l0.1-0.1c0.6-1.2,1-2.5,1-3.9C20,1032,16.4,1028.4,12,1028.4z M12,1032.4c2.2,0,4,1.8,4,4c0,2.2-1.8,4-4,4c-2.2,0-4-1.8-4-4C8,1034.2,9.8,1032.4,12,1032.4z"/><path style="fill: '+productdata[i].marker_scolor+'" d="M12,1031.4c-2.8,0-5,2.2-5,5c0,2.8,2.2,5,5,5c2.8,0,5-2.2,5-5C17,1033.6,14.8,1031.4,12,1031.4z"/></g></svg>'
-                +'</div></div>');
-                colormap[productdata[i].id] = [productdata[i].marker_pcolor, productdata[i].marker_scolor];
-            }
-            $("#legend").animate({
-                right: '10px',
-            }, 1200);
-            $("#logospan").animate({
-                left: '100px',
-            }, 1200);
-            
-            $.getJSON('/getlocations', function(data) {
-                for(var i = 0; i < data.length; i++){
-                    for(let prop in data[i]){
-                        console.log(data[i]);
-                        if(data[i][prop] == null){
-                            console.log("in");
-                            data[i][prop] = ""
-                        }
-                    }
-                }
-                for(var i = 0; i <data.length; i++){
-                    let color;
-                    var svgmarker = '<svg version="1.1" id="Layer_1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve"><style type="text/css">'
-                    +'.st0{fill:'+colormap[data[i].products[0].product.id][0]+';}.st1{fill:'+colormap[data[i].products[0].product.id][1]+';}</style>'
-                    +'<g transform="translate(0 -1028.4)"><path class="st0" d="M12,1028.4c-4.4,0-8,3.6-8,8c0,1.4,0.4,2.8,1,3.9c0.1,0.2,0.2,0.4,0.3,0.6l6.6,11.5l6.6-11.5c0.1-0.2,0.2-0.3,0.3-0.5l0.1-0.1c0.6-1.2,1-2.5,1-3.9C20,1032,16.4,1028.4,12,1028.4z M12,1032.4c2.2,0,4,1.8,4,4c0,2.2-1.8,4-4,4c-2.2,0-4-1.8-4-4C8,1034.2,9.8,1032.4,12,1032.4z"/><path class="st1" d="M12,1031.4c-2.8,0-5,2.2-5,5c0,2.8,2.2,5,5,5c2.8,0,5-2.2,5-5C17,1033.6,14.8,1031.4,12,1031.4z"/></g></svg>';
-                    var url = encodeURI("data:image/svg+xml," + svgmarker).replace('#','%23');
-                    marker = L.marker([data[i].latitude, data[i].longitude], {icon: new markerTemplate({iconUrl: url})});
-
-
-                    var content = "<h5 style='margin-top: 5px; margin-bottom: 5px; font-size: 17px; z-index: 999;'>"+data[i].name+"</h5>";
-                    content += "<p class='smallmarginp grey-text text-darken-2'>Patients In System: "+data[i].patients+"</p>";
-                    content +=  "<div class='row' style='margin: 0; margin-bottom: 10px;'><p class='smallmarginp'><span class='grey-text left'>Distribution(s) used:</span>";
-                    for(var j = 0; j < data[i].products.length; j++){
-                        content +="<span style='margin-top: -3px;' class='new badge left' data-badge-caption='" 
-                        + data[i].products[j].product.name +" "+ data[i].products[j].name+"'></span>"
-                    }
-                    content += "</p></div>"
-                    content+="<div class='divider' style='margin-bottom: 10px;'></div>"
-                    content += "<p class='grey-text text-darken-2' style='margin-top: 10px; margin-bottom: 16px;'>"+data[i].description+"</p>";
-                    content += "<a><p class='smallmarginp orange-text text-darken-2' style='margin-bottom: 0 !important;'>"+data[i].email+"</p></a>";
-                    content += "<a href="+data[i].website+"><p class='smallmarginp orange-text text-darken-2' style='margin-top: 2px !important;'>"+data[i].website+"</p></a>";
-                    content += "<p class='smallmarginp grey-text'><i>"+data[i].location+"</i></p>";     
-
-                    marker.bindPopup(content);
-                    marker.addTo(mymap); 
- 
+            var markerTemplate = L.Icon.extend({
+                options: {
+                    iconSize: [38, 38],
+                    shadowSize: [50, 64],
+                    iconAnchor: [19, 38],
+                    popupAnchor: [9, -38]
                 }
             });
-        });
-        
+            var mymap = L.map('map').setView([20, -20], 3);
+            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                maxZoom: 18,
+                id: 'mapbox.streets',
+                accessToken: 'pk.eyJ1IjoicHVud2FpIiwiYSI6ImNqb3c2eDV2MzAxM24za3BncmwwNmVqenQifQ._RX19AH6qY0c1r0YiM8Xag'
+            }).addTo(mymap);
+            var marker;
+            $.getJSON('/getproducts', (productdata)  => {
+                var colormap = {};
+                for (var i = 0; i < productdata.length; i++) {
+                    $("#legend").append('<div class="row valign-wrapper">'
+                        + '<div class="col s9">'
+                        + '<h5 class="legendtitles" style="margin: 0;">' + productdata[i].name + '</h5>'
+                        + '</div>'
+                        + '<div class="col s3">'
+                        + '<svg style="width: 40px" version="1.1" id="Layer_1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">'
+                        + '<g transform="translate(0 -1028.4)"><path style="fill: ' + productdata[i].marker_pcolor + '" d="M12,1028.4c-4.4,0-8,3.6-8,8c0,1.4,0.4,2.8,1,3.9c0.1,0.2,0.2,0.4,0.3,0.6l6.6,11.5l6.6-11.5c0.1-0.2,0.2-0.3,0.3-0.5l0.1-0.1c0.6-1.2,1-2.5,1-3.9C20,1032,16.4,1028.4,12,1028.4z M12,1032.4c2.2,0,4,1.8,4,4c0,2.2-1.8,4-4,4c-2.2,0-4-1.8-4-4C8,1034.2,9.8,1032.4,12,1032.4z"/><path style="fill: ' + productdata[i].marker_scolor + '" d="M12,1031.4c-2.8,0-5,2.2-5,5c0,2.8,2.2,5,5,5c2.8,0,5-2.2,5-5C17,1033.6,14.8,1031.4,12,1031.4z"/></g></svg>'
+                        + '</div></div>');
+                    colormap[productdata[i].id] = [productdata[i].marker_pcolor, productdata[i].marker_scolor];
+                }
+                $("#legend").animate({
+                    right: '10px',
+                }, 1200);
+                $("#logospan").animate({
+                    left: '100px',
+                }, 1200);
+
+                $.getJSON('/getlocations', (data) => {
+                    for (var i = 0; i < data.length; i++) {
+                        for (let prop in data[i]) {
+                            console.log(data[i]);
+                            if (data[i][prop] == null) {
+                                console.log("in");
+                                data[i][prop] = ""
+                            }
+                        }
+                    }
+                    for (var i = 0; i < data.length; i++) {
+                        let pcolor = "#e74c3c";
+                        let scolor = "#c0392b";
+                        if(data[i].products){
+                            if(data[i].products[0]){
+                                pcolor = colormap[data[i].products[0].product.id][0];
+                                scolor = colormap[data[i].products[0].product.id][1];
+                            }
+                        }
+                        var svgmarker = '<svg version="1.1" id="Layer_1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve"><style type="text/css">'
+                            + '.st0{fill:' + pcolor + ';}.st1{fill:' + scolor + ';}</style>'
+                            + '<g transform="translate(0 -1028.4)"><path class="st0" d="M12,1028.4c-4.4,0-8,3.6-8,8c0,1.4,0.4,2.8,1,3.9c0.1,0.2,0.2,0.4,0.3,0.6l6.6,11.5l6.6-11.5c0.1-0.2,0.2-0.3,0.3-0.5l0.1-0.1c0.6-1.2,1-2.5,1-3.9C20,1032,16.4,1028.4,12,1028.4z M12,1032.4c2.2,0,4,1.8,4,4c0,2.2-1.8,4-4,4c-2.2,0-4-1.8-4-4C8,1034.2,9.8,1032.4,12,1032.4z"/><path class="st1" d="M12,1031.4c-2.8,0-5,2.2-5,5c0,2.8,2.2,5,5,5c2.8,0,5-2.2,5-5C17,1033.6,14.8,1031.4,12,1031.4z"/></g></svg>';
+                        var url = encodeURI("data:image/svg+xml," + svgmarker).replace('#', '%23');
+                        marker = L.marker([data[i].latitude, data[i].longitude], { icon: new markerTemplate({ iconUrl: url }) });
 
 
-    })
+                        var content = "<h5 style='margin-top: 5px; margin-bottom: 5px; font-size: 17px; z-index: 999;'>" + data[i].name + "</h5>";
+                        content += "<p class='smallmarginp grey-text text-darken-2'>Patients In System: " + data[i].patients + "</p>";
+                        content += "<div class='row' style='margin: 0; margin-bottom: 10px;'><p class='smallmarginp'><span class='grey-text left'>Distribution(s) used:</span>";
+                        for (var j = 0; j < data[i].products.length; j++) {
+                            if(products[j]){
+                                content += "<span style='margin-top: -3px;' class='new badge left' data-badge-caption='"
+                                    + data[i].products[j].product.name + " " + data[i].products[j].name + "'></span>"
+                            }
+                        }
+                        content += "</p></div>"
+                        content += "<div class='divider' style='margin-bottom: 10px;'></div>"
+                        content += "<p class='grey-text text-darken-2' style='margin-top: 10px; margin-bottom: 16px;'>" + data[i].description + "</p>";
+                        content += "<a><p class='smallmarginp orange-text text-darken-2' style='margin-bottom: 0 !important;'>" + data[i].email + "</p></a>";
+                        content += "<a href=" + data[i].website + "><p class='smallmarginp orange-text text-darken-2' style='margin-top: 2px !important;'>" + data[i].website + "</p></a>";
+                        content += "<p class='smallmarginp grey-text'><i>" + data[i].location + "</i></p>";
 
+                        marker.bindPopup(content);
+                        marker.addTo(mymap);
+                    }
+                });
+            });
+        })
     </script>
-    {{!-- <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOx_n34yHgoKGkP7bcfpCRf6Ojm_f1lOU&callback=initMap">
+    {{!--
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOx_n34yHgoKGkP7bcfpCRf6Ojm_f1lOU&callback=initMap">
     </script> --}}
-     <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
-   integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
-   crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+        crossorigin=""></script>
 
     <div id="infobox" class="card-panel" style="display: none;">
-      <div class="row" style="margin: 0; padding: 0; margin-bottom: 5px;">
-        <i id="tabclose" class="material-icons right">close</i>
-      </div>
-      <h4 style="margin-top: 0; font-weight: 600" class="infotitle">
+        <div class="row" style="margin: 0; padding: 0; margin-bottom: 5px;">
+            <i id="tabclose" class="material-icons right">close</i>
+        </div>
+        <h4 style="margin-top: 0; font-weight: 600" class="infotitle">
 
-      </h4>
-      <p class="infodesc"></p>
+        </h4>
+        <p class="infodesc"></p>
     </div>
     {{> footer }}
-  </body>
+</body>
+
 </html>

@@ -1,0 +1,102 @@
+<head>
+    {{> head }}
+</head>
+<body>
+    {{> adminnav }}
+    <div class="maincontent">
+        <div style="background: red; width: 100%; color: white; position: relative; top:0">
+            {{ errormessages }}
+        </div>
+        <div class="row" style="margin-top: 0px; margin-bottom: 2px;">
+        <div class="col s12">
+            <div class="card-panel" style="padding:0px;">
+                <table class="highlight fixed_header" style="margin-top : 0; ">
+                    <thead style="" class="blue white-text">
+                        <th class="first">Username</th>
+                            <th>
+                                Is Admin
+                            </th>
+                            <th style="padding:4px;">
+                                <div class="nav-wrapper">
+                                    <div class="input-field searchinput">
+                                    <input id="search" type="search" required>
+                                    <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                                    <i class="material-icons">close</i>
+                                    </div>
+                                </div>
+                            </th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    {{!-- MODALS --}}
+    <div id="confirmdemote" style="margin-top: 20%; width: 440px;" class="modal">
+        <div class="modal-content" style="padding-bottom: 0;">
+            <span class="red-text" style="font-size: 26px; font-weight: 500">WARNING!</span>
+            <p style="font-size: 26px; margin-bottom: 5px; margin-top: 10px;">Are you sure you want to <span class="red-text"
+                    style="font-weight: 500">DEMOTE</span> the user <span class="teal-text text-lighten-1 whichuser"></span></p>
+        </div>
+        <div class="modal-footer">
+            <a id="confirmdemotebtn"><div class="btn waves-effect waves-light green">Yes I am sure</div></a>
+            <div class="modal-close btn waves-effect waves-light btn-flat" onclick="$('#deleteModal').modal('close'); return false;">Cancel</div>
+        </div>
+    </div>
+
+    <div id="confirmpromote" style="margin-top: 20%; width: 440px;" class="modal">
+        <div class="modal-content" style="padding-bottom: 0;">
+            <span class="red-text" style="font-size: 26px; font-weight: 500">WARNING!</span>
+            <p style="font-size: 26px; margin-bottom: 5px; margin-top: 10px;">Are you sure you want to <span class="green-text"
+                    style="font-weight: 500">PROMOTE</span> the user <span class="teal-text text-lighten-1 whichuser"></span></p>
+        </div>
+        <div class="modal-footer">
+            <a id="confirmpromotebtn" href=""><div class="btn waves-effect waves-light green">Yes I am sure</div></a>
+            <div class="modal-close btn waves-effect waves-light btn-flat" onclick="$('#deleteModal').modal('close'); return false;">Cancel</div>
+        </div>
+    </div>
+
+    {{> footer }}
+    <script>
+        $(document).ready(function(){
+            if (!RegExp.escape) {
+                RegExp.escape = function (s) {
+                    return s.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
+                };
+            }
+            var $rows = $('.databaseElement');
+
+            $('#search').keyup(function () {
+                var regex =  new RegExp(RegExp.escape($.trim(this.value).replace(/\s+/g, ' ')), 'i')
+                $('.databaseElement').hide().filter(function () {
+                    var text = $(this).children(".first").text().replace(/\s+/g, ' ');
+                    return regex.test(text)
+                }).show();
+            });
+
+            $.getJSON('/admin/getusers', (data) => {
+                for (var i = 0; i < data.length; i++) {
+                    $('tbody').append(`<tr class="databaseElement modal-trigger" data-productid="${i}" href="#modal1">
+                        <td class="first">${data[i].name}</td><td>${data[i].admin}</td>
+                        <td><div style="margin: 0" class="btnpromote btn waves-effect waves-light green modal-trigger" href="#confirmpromote" name="action">Promote</div>
+                        <div style="margin: 0; margin-left: 5px;" class="btndemote btn waves-effect waves-light red modal-trigger" href="#confirmdemote" name="action">Demote</div></td>
+                        </tr>`);
+                }
+
+                $(".btnpromote").click(function(){
+                    $(".whichuser").text(data[$(this).parent().parent().data("productid")].name);
+                    $("#confirmpromotebtn").attr('href', `/admin/setadmin/${data[$(this).parent().parent().data("productid")].id}`);
+                    console.log(data[$(this).parent().parent().data("productid")].id)
+                });
+
+                 $(".btndemote").click(function(){
+                    $(".whichuser").text(data[$(this).parent().parent().data("productid")].name);
+                    $("#confirmdemotebtn").attr('href', `/admin/unsetadmin/${data[$(this).parent().parent().data("productid")].id}`);
+                });
+            });
+        })
+    </script>
+</body>

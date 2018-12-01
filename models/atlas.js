@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING
   }, {});
   Atlas.associate = function(models) {
+    Atlas.belongsTo(models.Product, {as: "product"});
     Atlas.belongsToMany(models.Version, { through: "AtlasVersion",
     foreignKey: 'atlasId',
     Foreignunique: false,

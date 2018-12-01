@@ -1,4 +1,5 @@
-<ul id="slide-out" class="sidenav" style="width: 240px;transform: translateX(0px);">
+
+<ul id="slide-out" class="sidenav sidenav-fixed" style="width: 240px;transform: translateX(0px);">
     <li><div class="user-view" style="height: 130px; margin-bottom: 0;">
     <div class="background" >
         <img style="width: 100%" src="/img/pexelsglo.jpeg">
@@ -14,7 +15,30 @@
     <li>
         <a href="/admin">Admin Home</a>
     </li>
+    {{#if admin }}
     <li>
         <a href="/admin/products">Manage Products</a>
     </li>
+    <li>
+        <a href="/admin/manageusers">Manage Users</a>
+    </li>
+    {{/if }}
+    <li>
+        <a href="/logout" style="height: 30px; line-height: 30px;" class="waves-effect waves-light btn">Log Out</a>
+    </li>
 </ul>
+
+<nav class="hide-on-large-only orange">
+<div class="nav-wrapper">
+    <a href="#!" style="font-weight: 500; font-size: 30px;" class="brand-logo">LibreHealth Admin</a>
+    <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    <ul class="right hide-on-med-and-down">
+    <li><a href="sass.html">Sass</a></li>
+    <li><a href="badges.html">Components</a></li>
+    <li><a href="collapsible.html">Javascript</a></li>
+    <li><a href="mobile.html">Mobile</a></li>
+    </ul>
+</div>
+</nav>
+
+

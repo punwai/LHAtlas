@@ -3,11 +3,51 @@
 </head>
 <body>
     {{> adminnav }}
-    <div class="maincontent" style="margin-bottom: 0; margin-left: 240px;">
-        <div class="row" style="margin-bottom: 0;">
+    <div class="maincontent">
+        <div style="background: red; width: 100%; color: white; position: relative; top:0">
+            {{ errormessages }}
         </div>
-        <div id="addproductmodal" class="modal">
-            <form action="/api/products" method="post" id="addproductmodal">
+
+        <div class="row" style="margin-top: 0px;">
+            <div class="col s12">
+                <div class="card-panel" style="padding:0px;">
+                    <table class="highlight" style="margin-top : 0; padding: px; ">
+                        <thead style="" class="blue white-text">
+                            <th class="first">ProductID</th>
+                            <th>Product Name</th>
+                            <th></th>
+                        </thead>
+                        <tbody id="mainproductbody">
+
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn waves-effect waves-light modal-trigger" href="#addproductmodal"  name="action">Add Product
+                </button>                                
+            </div>
+
+            <div class="col s12">
+                <h5 id="versiontitle">Select Product to Show Version of</h5>
+                <div class="card-panel" style="padding: 0">
+                    <table class="highlight" style="margin-top : 0; padding: px; ">
+                        <thead style="" class="blue white-text">
+                            <th class="first">Version ID</th>
+                            <th>Version Name</th>
+                        </thead>
+                        <tbody id="versionbody">
+                            
+                        </tbody>
+                    </table>
+                </div>
+                <button id="addversionbutton" class="btn waves-effect waves-light modal-trigger" href="#addversionmodal" name="action">Add Version</button>  
+            </div>
+        </div>
+    </div>
+    
+    {{!-- MODALS --}}
+
+    <div id="addproductmodal" class="modal">
+        <form action="/api/products" method="post" id="addproductmodal">
             <div class="modal-content">
                 <h5>Adding New Product</h5>
                 <br>
@@ -33,8 +73,7 @@
                             <input type="color" id="scolor" name="marker_scolor" value="#e66465">
                             <label style="position: relative" for="editscolor">Marker Secondary Color</label>
                         </div>
-
-
+                        
                     </div>
                     <div class="col s5">
                         <svg version="1.1"
@@ -52,21 +91,20 @@
                             <path class="display1" d="M12,1031.4c-2.8,0-5,2.2-5,5c0,2.8,2.2,5,5,5c2.8,0,5-2.2,5-5C17,1033.6,14.8,1031.4,12,1031.4z"/>
                         </g>
                         </svg>
-
                     </div>
                 </div>
-                
             </div>
+
             <div class="modal-footer">
-            
                 <button type="submit" id="productsubmit" class="btn waves-effect waves-light">Submit
                 </button>                
             </div>
-            </form>
-        </div>
 
-        <div id="editproductmodal" class="modal">
-            <form id="editproductform">
+        </form>
+    </div>
+
+    <div id="editproductmodal" class="modal">
+        <form id="editproductform">
             <div class="modal-content row" style="padding-top: 10px; padding-bottom: 0;">
                 <h5>Editing Product</h5>
                 <div class="input-field col s12">
@@ -87,7 +125,6 @@
                             <input type="color" id="editscolor" name="marker_scolor" value="#e66465">
                             <label style="position: relative" for="head">Marker Secondary Color</label>
                         </div>
-
                     </div>
                     <div class="col s5">
                         <svg version="1.1"
@@ -105,7 +142,6 @@
                             <path class="display1" d="M12,1031.4c-2.8,0-5,2.2-5,5c0,2.8,2.2,5,5,5c2.8,0,5-2.2,5-5C17,1033.6,14.8,1031.4,12,1031.4z"/>
                         </g>
                         </svg>
-
                     </div>
                 </div>
             
@@ -114,8 +150,6 @@
             <div class="modal-footer">
                 <div id="producteditsubmit" class="btn waves-effect waves-light">Submit
                 </div>                
-
-
             </div>
             </form>
         </div>
@@ -133,52 +167,21 @@
                 </div>
             </div>
             <div class="modal-footer">
-            
                 <div id="versionsubmit" class="btn waves-effect waves-light">Submit
                 </div>                
             </div>
             </form>
         </div>
 
-        <div class="row" style="margin-top: 0px;">
-            <div class="col s12">
-                    <div class="card-panel" style="padding:0px;">
-                        <table class="highlight" style="margin-top : 0; padding: px; ">
-                            <thead style="" class="blue white-text">
-                                <th class="first">ProductID</th>
-                                <th>Product Name</th>
-                                <th></th>
-                            </thead>
-                            <tbody id="mainproductbody">
 
-                            </tbody>
-                        </table>
-                    </div>
-                    <button class="btn waves-effect waves-light modal-trigger" href="#addproductmodal"  name="action">Add Product
-                    </button>                                
-            </div>
-            <div class="col s12">
-                <h5>Product Versions</h5>
-                <div class="card-panel" style="padding: 0">
-                    <table class="highlight" style="margin-top : 0; padding: px; ">
-                        <thead style="" class="blue white-text">
-                            <th class="first">Version ID</th>
-                            <th>Version Name</th>
-                        </thead>
-                        <tbody id="versionbody">
-                            
-                        </tbody>
-                    </table>
-                </div>
-                <button class="btn waves-effect waves-light modal-trigger" href="#addversionmodal" name="action">Add Version
-                </button>  
-            </div>
-        </div>
-    </div>
+    {{!-- JS --}}
     <script>
-        $(document).ready(function(){
+        $(document).ready(function(){            
             editpColor = document.querySelector("#editpcolor");
             editsColor = document.querySelector("#editscolor");
+            $("#editpcolor").val("#E74C3C");
+            $("#editscolor").val("C0392B");
+
             editpColor.addEventListener("input", updateEditPSVG, false);
             editpColor.addEventListener("change", updateEditPSVG, false);
             editpColor.select();
@@ -189,6 +192,9 @@
 
             addpColor = document.querySelector("#pcolor");
             addsColor = document.querySelector("#scolor");
+            $("#pcolor").val("#E74C3C");
+            $("#scolor").val("#C0392B");
+
             addpColor.addEventListener("input", updateEditPSVG, false);
             addpColor.addEventListener("change", updateEditPSVG, false);
             addpColor.select();
@@ -197,15 +203,17 @@
             addsColor.addEventListener("change", updateEditSSVG, false);
             addsColor.select();
 
-
+            $("#addversionbutton").hide();
 
             function updateEditPSVG(event){
+                console.log('hey');
                 var p = $(".display0");
                 if(p){
                     p.css("fill", event.target.value);
                 }
             }
             function updateEditSSVG(event){
+                console.log('hey');
                 var s = $(".display1");
                 if(s){
                     s.css("fill", event.target.value);
@@ -213,8 +221,9 @@
                 console.log('in change')
             }
                 
-            $.getJSON('/api/products', function(data) {
-                
+            var productsdata;
+            $.getJSON('/api/products', (data) => {
+                productsdata = data;
                 for(var i = 0; i <data.length; i++){
                     $('#mainproductbody').append('<tr class="databaseElement" data-productindex="'+i+'" data-productid="' + data[i].id +'" href="#modal1"><td class="first">'+data[i].id+'</td><td>'+data[i].name+'</td><td style="padding: 2px;"><div style="margin-right: 5px;" href="#editproductmodal" class="editproductbtn modal-trigger btn right waves-effect orange waves-light">EDIT</div></td></tr>');
                 }
@@ -231,15 +240,18 @@
                 $(".databaseElement").click(function(){
                     console.log($(this).data('productid'));
                     $("#addversionmodal").data('productid', $(this).data('productid'))
-                    $.getJSON('/api/versions/' + $(this).data('productid'), function(versiondata) {
+                    $.getJSON('/api/versions/' + $(this).data('productid'), (versiondata) => {
                         $("#versionbody").empty();
                         for(var j = 0; j <versiondata.length; j++){
                             $("#versionbody").append('<tr class="versionElement" href="#modal1"><td class="first">'+versiondata[j].id+'</td><td>'+versiondata[j].name+'</td></tr>');
                         }
                     });
+                    $("#versiontitle").text(data[$(this).data('productindex')].name); 
+                    $("#addversionbutton").show();
                 });
-            })
-            $("#versionsubmit").click(function(){
+            });
+
+            $("#versionsubmit").click(() => {
                 var formdata = $("#addversionform").serialize();
                 console.log('submitting')
                 console.log($("#addversionmodal").data("productid"));
@@ -247,29 +259,26 @@
                     url: "/api/versions/" + $("#addversionmodal").data("productid"),
                     type: 'POST',
                     data: formdata,
-                    success: function(){
+                    success: () => {
                         console.log('success!!');
                     }
                 });
                 location.reload();
-                
             });
 
-            $("#producteditsubmit").click(function(){
+            $("#producteditsubmit").click(() => {
                 var formdata = $("#editproductform").serialize();
                 $.ajax({
                     url:  "/api/products/" + $("#addversionmodal").data("productid"),
                     type: 'PUT',
                     data: formdata,
-                    success: function(){
+                    success: () => {
                         console.log('success!!');
                     }
-
                 })
                 location.reload();
             })
         });
-        
     </script>
     {{> footer }}
 </body>

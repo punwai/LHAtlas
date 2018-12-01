@@ -19,66 +19,62 @@ const Version = require('./models').Version;
 hbs.registerPartials(__dirname + '/views/partials');
 app.use(express.static(path.join(__dirname, 'static')));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.set('Issuer', process.env.issuer);
 app.use(flash());
-app.use(passport.initialize());
-app.use(passport.session());  
 
 var apiroute = require('./routes/api')(app);
+var adminroute = require('./routes/admin')(app);
 
+app.use('/api', passport.authenticate('jwtadmin', { session: false }), apiroute);
+app.use('/admin', adminroute);
 
-var admin = express.Router();
-
-
-admin.get('/',  function(req,res){
-  res.render('admindash')
-})
-
-admin.get('/products', function(req,res){
-  res.render('adminproduct')
-})
-
-app.use('/api', passport.authenticate('jwtadmin', { session : false }), apiroute);
-app.use('/admin', passport.authenticate('jwtadmin', { session : false, failureRedirect: '/denied'}), admin);
-
-app.get('/denied', function(req,res){
+app.get('/denied', (req, res) => {
   res.render('denied');
 });
 
-app.get('/login', function(req, res){
-  res.render('login', {message: req.session.message});
+app.get('/login', (req, res) => {
+  res.render('login', { message: req.session.message });
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy((err) => {
+
+    res.redirect('/');
+
+  });
 });
 
 app.post('/login', async (req, res, next) => {
-  passport.authenticate('login', (err, user, info) => {     
+  passport.authenticate('login', (err, user, info) => {
     try {
-      if(err || !user){
-        if(err){
+      if (err || !user) {
+        if (err) {
           console.log(err);
         }
         req.session.message = info.message;
         res.redirect('/login');
       }
-      req.login(user, { session : false,
-        failureFlash : true
+      req.login(user, {
+        failureFlash: true
       }, async (error) => {
-        if( error ) return next(error)
-        const body = { _id : user.id};
-        const token = jwt.sign({ 
-          user : body,        
-        },app.get('Secret'),
-        {
-          expiresIn: 15*60,
-          issuer: app.get('Issuer')
-        }
+
+        if (error) return next(error)
+        const body = { _id: user.id, admin: user.admin };
+        const token = jwt.sign({
+          user: body,
+        }, app.get('Secret'),
+          {
+            expiresIn: 15 * 60,
+            issuer: app.get('Issuer'),
+          }
         );
-        res.cookie('access_token' ,token, {expires: new Date(Date.now() + 900000), httpOnly: true});
+        res.cookie('access_token', token, { expires: new Date(Date.now() + 900000), httpOnly: true });
         res.redirect('/admin');
         // res.end(JSON.stringify({"access_token": token, "status": "success"}));
-      });     
+      });
     } catch (error) {
       return next(err);
     }
@@ -91,48 +87,88 @@ const googleMapsClient = require('@google/maps').createClient({
 });
 
 
-app.get('/', function(req, res){
-    res.render('index');
+app.get('/',(req, res) => {
+  var isloggedin = false;
+  if(req.isAuthenticated()){
+    isloggedin = true;
+  }
+  res.render('index', {loggedIn: isloggedin});
 });
 
-app.get('/signup', function(req, res){
-  res.render('registration');
+app.get('/signup', (req, res) => {
+  console.log(req.session.message);
+  res.render('registration', { message: req.session.message });
 })
 
 
-app.post('/signup', passport.authenticate('register', { session : false,    failureRedirect : '/signup',
-}), function (req, res){
-  res.redirect('/');
+// app.post('/signup', passport.authenticate('register', {
+//   failureRedirect: '/signup',
+//   failureMessage: true
+// }), (req, res) => {
+
+//   res.redirect('/admin');
+// });
+
+app.post('/signup', async (req, res, next) => {
+  passport.authenticate('register', (err, user, info) => {
+    try {
+      if (err || !user) {
+        if (err) {
+          console.log(err);
+        }
+        req.session.message = info.message;
+        res.redirect('/signup');
+      }
+      req.login(user, {
+        failureFlash: true
+      }, async (error) => {
+
+        if (error) return next(error)
+        const body = { _id: user.id, admin: user.admin };
+        const token = jwt.sign({
+          user: body,
+        }, app.get('Secret'),
+          {
+            expiresIn: 15 * 60,
+            issuer: app.get('Issuer'),
+          }
+        );
+        res.cookie('access_token', token, { expires: new Date(Date.now() + 900000), httpOnly: true });
+        res.redirect('/admin');
+        // res.end(JSON.stringify({"access_token": token, "status": "success"}));
+      });
+    } catch (error) {
+      return next(err);
+    }
+  })(req, res, next);
 });
 
-
-
-app.get('/getlocations', (req,res) => {
+app.get('/getlocations', (req, res) => {
   Atlas.findAll({
     include: [{
-        model: Version,
-        as: "products",
+      model: Version,
+      as: "products",
+      required: false,
+      attributes: ['id', 'name'],
+      through: { attributes: [] },
+      include: [{
+        model: Product,
+        as: "product",
         required: false,
-        attributes: ['id', 'name'],
-        through: { attributes: [] },
-        include: [{
-            model: Product,
-            as: "product",
-            required: false,
-        }]
-      }]        
+      }]
+    }]
   }).then(atlases => res.json(atlases));
 })
 
 app.get('/getproducts', (req, res) => {
   Product.findAll({
     include: [{
-        model: Version,
-        as: 'versions',
-        required: false
+      model: Version,
+      as: 'versions',
+      required: false
     }]
   }).then(product =>
-      res.json(product)
+    res.json(product)
   );
 })
 

@@ -8,6 +8,10 @@
 }
 /* label color */
 
+.leaflet-control-zoom{
+    top: 50px;
+
+}
 /* label focus color */
 .smallmarginp{
     margin-top: 2px !important;
@@ -19,7 +23,7 @@ label.error {
     font-size:14px;
     font-style:italic;
     position: relative;  /* <- here */
-    top: px;           /* <- here */
+    top: 0px;           /* <- here */
     left: 0px;        /* <- here */
 }
 
@@ -53,11 +57,26 @@ label.error {
     width:100%;
     table-layout:fixed;
 }
-.fixed_header>thead {
-    width: calc( 100% - 1em )
-}
+
 .fixed_header{
     width:100%;
+}
+
+.searchinput>input{
+    margin: 0;
+}
+
+.searchinput>i{
+    line-height: 1.3em;
+}
+.searchinput>label>i{
+    line-height: 1.8em;
+}
+.searchinput{
+    background: rgba(0,0,0,0.2);
+    height: 40px;
+    margin: 0;
+
 }
 .input-field input[type=text]:focus + label {
 color: #000;
@@ -82,6 +101,18 @@ box-shadow: 0 1px 0 0 #000;
 color: #000;
 }
     
+.maincontent {
+    margin-bottom: 0; 
+    padding-left: 240px;
+}
+  
+
+@media only screen and (max-width : 992px) {
+    .maincontent {
+      padding-left: 0;
+    }
+    .
+}
 .postrow{
     margin-top: 4px;
     margin-bottom: 4px;
