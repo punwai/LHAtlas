@@ -97,9 +97,7 @@
                 $.getJSON('/getlocations', (data) => {
                     for (var i = 0; i < data.length; i++) {
                         for (let prop in data[i]) {
-                            console.log(data[i]);
                             if (data[i][prop] == null) {
-                                console.log("in");
                                 data[i][prop] = ""
                             }
                         }
@@ -124,7 +122,7 @@
                         content += "<p class='smallmarginp grey-text text-darken-2'>Patients In System: " + data[i].patients + "</p>";
                         content += "<div class='row' style='margin: 0; margin-bottom: 10px;'><p class='smallmarginp'><span class='grey-text left'>Distribution(s) used:</span>";
                         for (var j = 0; j < data[i].products.length; j++) {
-                            if(products[j]){
+                            if(data[i].products[j]){
                                 content += "<span style='margin-top: -3px;' class='new badge left' data-badge-caption='"
                                     + data[i].products[j].product.name + " " + data[i].products[j].name + "'></span>"
                             }
