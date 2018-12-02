@@ -18,7 +18,7 @@ module.exports = function (app) {
 
   app.set('Secret', process.env.jwtSecret);
   app.use(cookieParser('keyboard cat'));
-  app.use(session({ cookie: { maxAge: 120000 } }));
+  app.use(session({ cookie: { maxAge: 60*60*10000 } }));
   app.use(flash());
   app.use(passport.initialize());
   app.use(passport.session()); // persistent login sessions
