@@ -4,7 +4,7 @@
 <body>
     {{> adminnav }}
     <div class="maincontent">
-         {{#if errormessages }}
+        {{#if errormessages }}
         <div class="row">
             <div class="col s12">
             <div class="card red darken-1">
@@ -22,8 +22,8 @@
         </div>
         {{/if }}
         {{#if successmessage }}
-        <div class="row">
-            <div class="col s12">
+        <div class="row" style="margin-bottom: 5px;">
+            <div class="col s12" style="margin-bottom: 0px;">
             <div class="card green lighten-1">
                 <div class="card-content white-text">
                     <span class="card-title">{{successmessage}} </span>
@@ -148,7 +148,7 @@
                 }).show();
             });
 
-            $.getJSON('/admin/getusers', (data) => {
+            $.getJSON('/admin/manage/users', (data) => {
                 for (var i = 0; i < data.length; i++) {
                     var button;
                     if(data[i].admin){
@@ -182,19 +182,15 @@
                     if(e.shiftKey) {
                         var start =  $('.checkboxes').index(this);
                         var end =  $('.checkboxes').index(lastChecked);
-
                         $('.checkboxes').slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', lastChecked.checked);
-
                     }
-
                     lastChecked = this;
                 });
 
                 $('#submitbatchdel').click(function(){
                     formdata = $("#tableform").serialize();
-                    console.log(formdata);
                     $.ajax({
-                        url: "/admin/batchdeleteusers",
+                        url: "/admin/manage/users",
                         data: $('.checkboxes:checked').serialize(),
                         type: 'DELETE',
                         success: function (data) {
@@ -205,12 +201,12 @@
                 });
 
                 $('#submitbatchdemote').click(function(){
-                    formdata = $("#tableform").serialize();
-                    console.log(formdata);
+                    formdata = $('.checkboxes:checked').serialize();
+                    formdata += '&toAdmin=0',
                     $.ajax({
-                        url: "/admin/batchdemote",
-                        data: $('.checkboxes:checked').serialize(),
-                        type: 'POST',
+                        url: `/admin/manage/users`,
+                        data: formdata,
+                        type: 'PUT',
                         success: function (data) {
                             console.log();
                         }
@@ -219,12 +215,13 @@
                 })
 
                 $('#submitbatchpromote').click(function(){
-                    formdata = $("#tableform").serialize();
+                    formdata = $('.checkboxes:checked').serialize();
+                    formdata += '&toAdmin=1',
                     console.log(formdata);
                     $.ajax({
-                        url: "/admin/batchpromote",
-                        data: $('.checkboxes:checked').serialize(),
-                        type: 'POST',
+                        url: `/admin/manage/users`,
+                        data: formdata,
+                        type: 'PUT',
                         success: function (data) {
                             console.log();
                         }
@@ -234,13 +231,36 @@
 
                 $(".btnpromote").click(function(){
                     $(".whichuser").text(data[$(this).parent().parent().data("productid")].name);
-                    $("#confirmpromotebtn").attr('href', `/admin/setadmin/${data[$(this).parent().parent().data("productid")].id}`);
-                    console.log(data[$(this).parent().parent().data("productid")].id)
+                    $("#confirmpromotebtn").unbind('click');
+                    $("#confirmpromotebtn").click(function(){
+                        var formdata = 'toAdmin=1';
+                        $.ajax({
+                            url: `/admin/manage/users/${data[$(this).parent().parent().data("productid")].id}`,
+                            data: formdata,
+                            type: 'PUT',
+                            success: function (data) {
+                                console.log();
+                            }
+                        });
+                        location.reload();
+                    })
                 });
 
                  $(".btndemote").click(function(){
                     $(".whichuser").text(data[$(this).parent().parent().data("productid")].name);
-                    $("#confirmdemotebtn").attr('href', `/admin/unsetadmin/${data[$(this).parent().parent().data("productid")].id}`);
+                    $("#confirmdemotebtn").unbind('click');
+                    $("#confirmdemotebtn").click(function(){
+                        var formdata = 'toAdmin=0';
+                        $.ajax({
+                            url: `/admin/manage/users/${data[$(this).parent().parent().data("productid")].id}`,
+                            data: formdata,
+                            type: 'PUT',
+                            success: function (data) {
+                                console.log();
+                            }
+                        });
+                        location.reload();
+                    })
                 });
             });
         })

@@ -1,5 +1,6 @@
 var express = require('express');
 const User = require('../models').User;
+const { check, validationResult } = require('express-validator/check');
 
 module.exports = (app) => {
     var admin = express.Router();
@@ -32,44 +33,7 @@ module.exports = (app) => {
         }
     })
 
-    admin.get('/setadmin/:id', (req,res) => {
-        if (req.isAuthenticated()) {
-            if (req.user.admin) {
-                User.update(
-                    {admin: 1},
-                    {where: {id: req.params.id}}
-                ).then(function(rowsUpdated) {
-                    if(rowsUpdated){
-                        req.session.errormessages = "Success!!!"
-                        res.redirect('/admin/manageusers');
-                    }else{
-                        req.session.errormessages = "No users found"
-                        res.redirect('/admin/manageusers')
-                    }
-                })
-            }else{
-                res.redirect('/denied');
-            }
-        }else{
-            res.redirect('/denied');
-        }
-    });
-
-    admin.get('/getusers', (req,res) => {
-        if (req.isAuthenticated()) {
-            if (req.user.admin) {
-                User.findAll().then((users) => {
-                    res.json(users);
-                });
-            }else{
-                res.redirect('/denied');
-            }
-        }else{
-            res.redirect('/denied');
-        }
-    });
-
-    admin.get('/manageusers', (req,res) => {
+    admin.get('/users', (req,res) => {
         if (req.isAuthenticated()) {
             if (req.user.admin) {
                 var successmessage = req.session.successmessage;
@@ -85,30 +49,24 @@ module.exports = (app) => {
         }
     });
 
-    admin.post('/batchdemote', (req,res) => {
+    admin.get('/manage/users', (req,res) => {
         if (req.isAuthenticated()) {
             if (req.user.admin) {
-                User.update(
-                    {admin: 0},
-                    {where: {id: req.body.checkboxes}}
-                ).then(function(rowsUpdated) {
-                    if(rowsUpdated){
-                        req.session.successmessage = "Success!!!"
-                        res.redirect('/admin/manageusers');
-                    }else{
-                        req.session.errormessages = "No users found"
-                        res.redirect('/admin/manageusers')
-                    }
+                User.findAll().then((users) => {
+                    res.json(users);
                 });
-            } else {
-                res.redirect('/denied');
+            }else{
+                return res.status(403).json({error: "You are not authorised for this action"});
             }
-        } else {
-            res.redirect('/denied');
+        }else{
+            return res.status(403).json({error: "You are not logged in"});
         }
     });
 
-    admin.delete('/batchdeleteuser', (req,res) => {
+    admin.delete('/manage/users', [
+        check('toAdmin').trim().escape().isBoolean().withMessage('invalid role for user sent')
+    ],
+    (req,res) => {
         if (req.isAuthenticated()) {
             if (req.user.admin) {
                 User.destroy(
@@ -116,63 +74,65 @@ module.exports = (app) => {
                 ).then(function(rowsUpdated) {
                     if(rowsUpdated){
                         req.session.successmessage = "Success!!!"
-                        res.redirect('/admin/manageusers');
+                        return res.status(400).json(rowsUpdated);
                     }else{
-                        req.session.errormessages = "User ID Eror!"
-                        res.redirect('/admin/manageusers')
+                        req.session.errormessages = "No users found"
+                        return res.status(404).json({error: "Users Not Found"});
                     }
                 });
             } else {
-                res.redirect('/denied');
+                return res.status(403).json({error: "You are not authorised for this action"});
             }
         } else {
-            res.redirect('/denied');
+            return res.status(403).json({error: "You are not logged in"});
         }
     });
 
-    admin.post('/batchpromote', (req,res) => {
+    admin.put('/manage/users/', [
+        check('toAdmin').trim().escape().isBoolean().withMessage('invalid role for user sent')
+    ], (req,res) => {
         if (req.isAuthenticated()) {
             if (req.user.admin) {
+                console.log(req.body)
                 User.update(
-                    {admin: 1},
+                    {admin: req.body.toAdmin},
                     {where: {id: req.body.checkboxes}}
                 ).then(function(rowsUpdated) {
                     if(rowsUpdated){
                         req.session.successmessage = "Success!!!"
-                        res.redirect('/admin/manageusers');
+                        return res.status(400).json(rowsUpdated);
                     }else{
                         req.session.errormessages = "No users found"
-                        res.redirect('/admin/manageusers')
+                        return res.status(404).json({error: "Users Not Found"});
                     }
                 });
             } else {
-                res.redirect('/denied');
+                return res.status(403).json({error: "You are not authorised for this action"});
             }
         } else {
-            res.redirect('/denied');
+            return res.status(403).json({error: "You are not logged in"});
         }
     });
 
-    admin.get('/unsetadmin/:id', (req,res) => {
+    admin.put('/manage/users/:id', (req,res) => {
         if (req.isAuthenticated()) {
             if (req.user.admin) {
                 User.update(
-                    {admin: 0},
+                    {admin: req.body.toAdmin},
                     {where: {id: req.params.id}}
                 ).then(function(rowsUpdated) {
                     if(rowsUpdated){
                         req.session.errormessages = "Success!!!"
-                        res.redirect('/admin/manageusers');
+                        return res.status(400).json(rowsUpdated);
                     }else{
-                        req.session.errormessages = "No users found"
-                        res.redirect('/admin/manageusers')
+                        return res.status(404).json({error: "User Not Found"});
                     }
                 })
             }else{
-                res.redirect('/denied');
+                return res.status(403).json({error: "You are not authorised for this action"});
             }
         }else{
-            res.redirect('/denied');
+            return res.status(403).json({error: "You are not logged in"});
         }
     });
 

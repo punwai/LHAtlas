@@ -69,7 +69,7 @@ app.post('/login', async (req, res, next) => {
             issuer: app.get('Issuer'),
           }
         );
-        res.cookie('access_token', token, { expires: new Date(Date.now() + 900000), httpOnly: true });
+        res.cookie('access_token', token, { expires: new Date(Date.now() + 900000), sameSite: true, httpOnly: true });
         res.redirect('/admin');
         // res.end(JSON.stringify({"access_token": token, "status": "success"}));
       });
@@ -98,15 +98,6 @@ app.get('/signup', (req, res) => {
   res.render('registration', { message: req.session.message });
 })
 
-
-// app.post('/signup', passport.authenticate('register', {
-//   failureRedirect: '/signup',
-//   failureMessage: true
-// }), (req, res) => {
-
-//   res.redirect('/admin');
-// });
-
 app.post('/signup', async (req, res, next) => {
   passport.authenticate('register', (err, user, info) => {
     try {
@@ -133,7 +124,6 @@ app.post('/signup', async (req, res, next) => {
         );
         res.cookie('access_token', token, { expires: new Date(Date.now() + 900000), httpOnly: true });
         res.redirect('/admin');
-        // res.end(JSON.stringify({"access_token": token, "status": "success"}));
       });
     } catch (error) {
       return next(err);
