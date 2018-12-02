@@ -232,7 +232,6 @@
                     location.reload();
                 })
 
-
                 $(".btnpromote").click(function(){
                     $(".whichuser").text(data[$(this).parent().parent().data("productid")].name);
                     $("#confirmpromotebtn").attr('href', `/admin/setadmin/${data[$(this).parent().parent().data("productid")].id}`);

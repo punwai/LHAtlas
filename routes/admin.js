@@ -108,7 +108,7 @@ module.exports = (app) => {
         }
     });
 
-    admin.post('/batchdeleteuser', (req,res) => {
+    admin.delete('/batchdeleteuser', (req,res) => {
         if (req.isAuthenticated()) {
             if (req.user.admin) {
                 User.destroy(
