@@ -4,7 +4,7 @@ An atlas application designed for LibreHealth. The app runs on NodeJS and MySQL.
 ### Setup
 - Fork and Clone Repo
 - Create A MySQL Database and use the following initiation code.
-- Then open up .env file at the root of the repository and add the following information.
+- Then create an .env file at the root of the repository and add the following information.
 ```
 DB_HOST=YOUR_DB_HOST
 DB_USER=YOUR_DB_USER
@@ -17,6 +17,3 @@ issuer = YOUR_SITE_URL
 ```
 
 - Finally, run `npm install` and `npm start` to start the atlas!
-
-### OVERVIEW of API:
-
