@@ -31,19 +31,18 @@ module.exports = (app) => {
 
     apiroute.post('/atlas', [
         emptyString,
-        check('name').trim().escape().isLength({ min: 3, max: 255 }),
-        check('description').trim().escape().optional().isLength({ max: 255 }),
-        check('location').trim().escape().optional().isLength({ max: 255 }),
-        check('latitude').trim().escape().optional().isNumeric(),
-        check('longitude').trim().escape().optional().isNumeric(),
-        check('website').trim().escape().optional().isLength({ max: 255 }),
-        check('email').trim().escape().optional().isLength({ max: 255 }).isEmail(),
-        check('patients').trim().optional().isNumeric(),
+        check('name').trim().escape().isLength({ min: 3, max: 255 }).withMessage('must be between 3 and 255 chars long'),
+        check('description').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 chars long'),
+        check('location').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 chars long'),
+        check('latitude').trim().escape().optional().isNumeric().withMessage('must be numeric'),
+        check('longitude').trim().escape().optional().isNumeric().withMessage('must be numeric'),
+        check('website').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 chars long'),
+        check('email').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 chars long').isEmail().withMessage('must be an email'),
+        check('patients').trim().optional().isNumeric().withMessage('must be numeric'),
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             req.session.errormessages = errors.array();
-            console.log
             res.redirect("/admin");
         }else{
             token = getjwttoken(req);
@@ -72,7 +71,7 @@ module.exports = (app) => {
                     }
                 }
     
-            }).then(() => { res.redirect("/admin"); })    
+            }).then(() => { req.session.successmessage = "Action Success!"; res.redirect("/admin"); })    
         }
     });
     //Get All
@@ -130,9 +129,12 @@ module.exports = (app) => {
                             where: {
                                 id: req.params.id
                             }
-                        });
+                        }).then(() => {
+                            req.session.successmessage = "Delete Success!";
+                            return res.render('admin');
+                        })
                     } else {
-                        res.render('denied');
+                        return res.render('denied');
                     }        
                 }else{
                     res.render('denied');
@@ -177,45 +179,53 @@ module.exports = (app) => {
     //Update by Id
     apiroute.put('/atlas/:id', [
         emptyString,
-        check('name').trim().escape().isLength({ min: 3, max: 255 }),
-        check('description').trim().escape().optional().isLength({ max: 255 }),
-        check('location').trim().escape().optional().isLength({ max: 255 }),
-        check('latitude').trim().escape().optional().isNumeric(),
-        check('longitude').trim().escape().optional().isNumeric(),
-        check('website').trim().escape().optional().isLength({ max: 255 }),
-        check('email').trim().escape().optional().isLength({ max: 255 }).isEmail(),
-        check('patients').trim().optional().isNumeric(),
+        check('name').trim().escape().isLength({ min: 3, max: 255 }).withMessage('must be between 3 and 255 chars long'),
+        check('description').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 chars long'),
+        check('location').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 chars long'),
+        check('latitude').trim().escape().optional().isNumeric().withMessage('must be numeric'),
+        check('longitude').trim().escape().optional().isNumeric().withMessage('must be numeric'),
+        check('website').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 chars long'),
+        check('email').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 chars long').isEmail().withMessage('must be an email'),
+        check('patients').trim().optional().isNumeric().withMessage('must be numeric'),
     ], (req, res) => {
-        token = getjwttoken(req);
-        if (token.user.admin) {
-            Atlas.update({
-                name: req.body.name,
-                description: req.body.description,
-                location: req.body.location,
-                latitude: req.body.latitude,
-                longitude: req.body.longitude,
-                website: req.body.website,
-                email: req.body.email,
-                patients: req.body.patients
-            }, {
-                    where: {
-                        id: req.params.id
-                    }
-                }).then(
-                    Atlas.findOne({
+        if (!errors.isEmpty()) {
+            req.session.errormessages = errors.array();
+            res.redirect("/admin");
+        }else{
+            token = getjwttoken(req);
+            if (token.user.admin) {
+                Atlas.update({
+                    name: req.body.name,
+                    description: req.body.description,
+                    location: req.body.location,
+                    latitude: req.body.latitude,
+                    longitude: req.body.longitude,
+                    website: req.body.website,
+                    email: req.body.email,
+                    patients: req.body.patients
+                }, {
                         where: {
                             id: req.params.id
                         }
-                    }).then((atlas) => {
-                        if (Array.isArray(req.body.products)) {
-                            atlas.setProducts(req.body.products);
-                        } else {
-                            atlas.setProducts([req.body.products]);
-                        }
-                    })
-                )
-        } else {
-            res.render('denied')
+                    }).then(
+                        Atlas.findOne({
+                            where: {
+                                id: req.params.id
+                            }
+                        }).then((atlas) => {
+                            if (Array.isArray(req.body.products)) {
+                                atlas.setProducts(req.body.products);
+                            } else {
+                                atlas.setProducts([req.body.products]);
+                            }
+                        }).then(() => {
+                            req.session.successmessage = "Action Success!";
+                            res.render('/admin')
+                        })
+                    )
+            } else {
+                res.render('denied')
+            }
         }
     });
 
@@ -234,15 +244,15 @@ module.exports = (app) => {
 
     apiroute.post('/products', [
         emptyString,
-        check('name').trim().escape().isLength({ min: 1, max: 255 }),
-        check('description').trim().escape().optional().isLength({ max: 255 }),
-        check('marker_pcolor').trim().escape().optional().isLength({ max: 255 }),
-        check('marker_scolor').trim().escape().optional().isLength({ max: 255 }),
+        check('name').trim().escape().isLength({ min: 1, max: 255 }).withMessage('must be between 1 and 255 characters long'),
+        check('description').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 characters long'),
+        check('marker_pcolor').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 characters long'),
+        check('marker_scolor').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 characters long'),
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            req.session.errormessages = errors + "ERRORS!";
-            res.redirect('/admin');
+            req.session.errormessages = errors.array();
+            res.redirect("/admin");
         }else{
             var token = getjwttoken(req);
             console.log(token);
@@ -255,7 +265,7 @@ module.exports = (app) => {
                             description: req.body.description,
                             marker_pcolor: req.body.marker_pcolor,
                             marker_scolor: req.body.marker_scolor,
-                    }).then(() => { res.redirect("/admin/products"); });    
+                    }).then(() => { req.session.successmessage = "Action Success!"; res.redirect("/admin/products"); });    
                 }else{
                     res.redirect('/denied');
                 }
@@ -267,27 +277,28 @@ module.exports = (app) => {
 
     apiroute.put('/products/:id', [
         emptyString,
-        check('name').trim().escape().isLength({ min: 1, max: 255 }),
-        check('description').trim().escape().optional().isLength({ max: 255 }),
-        check('marker_pcolor').trim().escape().optional().isLength({ max: 255 }),
-        check('marker_scolor').trim().escape().optional().isLength({ max: 255 }),
+        check('name').trim().escape().isLength({ min: 1, max: 255 }).withMessage('must be between 1 and 255 characters long'),
+        check('description').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 characters long'),
+        check('marker_pcolor').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 characters long'),
+        check('marker_scolor').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 characters long'),
     ], (req, res) => {
-
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(422).json({ error: message() });
-        }
+            req.session.errormessages = errors.array();
+            res.redirect("/admin");
+        }else{
 
-        Product.update({
-            name: req.body.name,
-            description: req.body.description,
-            marker_pcolor: req.body.marker_pcolor,
-            marker_scolor: req.body.marker_scolor,
-        }, {
-                where: {
-                    id: req.params.id
-                }
-            }).then(() => { res.redirect("/admin/products"); })
+            Product.update({
+                name: req.body.name,
+                description: req.body.description,
+                marker_pcolor: req.body.marker_pcolor,
+                marker_scolor: req.body.marker_scolor,
+            }, {
+                    where: {
+                        id: req.params.id
+                    }
+                }).then(() => { req.session.successmessage = "Action Success!"; res.redirect("/admin/products"); })
+        }
     });
 
 
@@ -301,7 +312,7 @@ module.exports = (app) => {
     apiroute.post('/versions/:productid',
         [
             emptyString,
-            check('name').trim().escape().isLength({ min: 3, max: 255 })
+            check('name').trim().escape().isLength({ min: 1, max: 255 }).withMessage('must be less than 255 characters long'),
         ]
         , (req, res) => {
             let tempid = req.params.productid;
@@ -309,6 +320,7 @@ module.exports = (app) => {
                 name: req.body.name,
                 productId: tempid
             }).then(() => {
+                res.session.successmessage = "Action Success!";
                 res.redirect("/admin/products");
             })
         });

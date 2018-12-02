@@ -4,9 +4,35 @@
 <body>
     {{> adminnav }}
     <div class="maincontent">
-        <div style="background: red; width: 100%; color: white; position: relative; top:0">
-            {{ errormessages }}
+        {{#if errormessages }}
+        <div class="row">
+            <div class="col s12">
+            <div class="card red darken-1">
+                <div class="card-content white-text">
+                    <span class="card-title">ACTION FAILED. ERRORS:</span>
+                   {{#each errormessages }}
+                    <p>
+                        {{ this.param }}(val: {{ this.value }}) : {{ this.msg }}
+                    </p>
+                    {{/each}}
+                    
+                </div>
+            </div>
+            </div>
         </div>
+        {{/if }}
+        {{#if successmessage }}
+        <div class="row">
+            <div class="col s12">
+            <div class="card green lighten-1">
+                <div class="card-content white-text">
+                    <span class="card-title">{{successmessage}} </span>
+                    
+                </div>
+            </div>
+            </div>
+        </div>
+        {{/if }}
 
         <div class="row" style="margin-top: 0px;">
             <div class="col s12">

@@ -6,9 +6,37 @@
     {{> adminnav }}
 
     <div class="maincontent" >
-        <div style="background: red; width: 100%; color: white; position: relative; top:0">
-            {{ errormessages }}
+         {{#if errormessages }}
+        <div class="row">
+            <div class="col s12">
+            <div class="card red darken-1">
+                <div class="card-content white-text">
+                    <span class="card-title">ACTION FAILED. ERRORS:</span>
+                   {{#each errormessages }}
+                    <p>
+                        {{ this.param }}(val: {{ this.value }}) : {{ this.msg }}
+                    </p>
+                    {{/each}}
+                    
+                </div>
+            </div>
+            </div>
         </div>
+        {{/if }}
+        {{#if successmessage }}
+        <div class="row">
+            <div class="col s12">
+            <div class="card green lighten-1">
+                <div class="card-content white-text">
+                    <span class="card-title">{{successmessage}} </span>
+                    
+                </div>
+            </div>
+            </div>
+        </div>
+        {{/if }}
+
+
         {{!-- ADD ENTRY --}}
         <div class="row" style="margin-bottom: 0;">
             <form id="addentryform" class="col s12" style="margin-bottom: 2px;" action="/api/atlas" method="post">
@@ -156,7 +184,7 @@
                 <div class="modal-footer" style="padding-right: 30px;">
                     <a id="edit-latlong-lookup" class="waves-effect waves-light btn" style="margin-right: 20px;">get
                         lat long</a>
-                    <div class="btn orange waves-effect waves-light" style="margin-right: 20px;" onclick="$('#editModal').modal('open');">Edit
+                    <div class="btn orange waves-effect waves-light" style="margin-right: 20px;" id="editmodalbutton">Edit
                     </div>
                     <div class="btn red waves-effect waves-light" onclick="$('#deleteModal').modal('open');">Delete
                     </div>
@@ -213,6 +241,7 @@
                 }
                 $('select').formSelect();
             });
+
             $('#addentryform').validate({ // initialize the plugin
                 rules: {
                     name: {
@@ -227,7 +256,8 @@
                     },
                     email: {
                         email: true
-                    }
+                    },
+
                 }
             });
 
@@ -314,10 +344,17 @@
                 })
             })
 
-            $("#submitedit").click(() => {
-                var formdata = $("#updateform").serialize();
-                console.log($("#modalid").data("productid"));
+            $("#editmodalbutton").click(() => {                
+                if(!$("#updateform").valid()) return false;
+                $('#editModal').modal('open');
+            });
 
+            $("#submitedit").click((e) => {
+                e.preventDefault();
+
+                var formdata = $("#updateform").serialize();
+                
+                if(!$("#updateform").valid()) return false;
                 $.ajax({
                     url: "/api/atlas/" + $("#modalid").data("productid"),
                     type: 'PUT',
@@ -326,9 +363,9 @@
                         console.log('success!!');
                     }
                 });
-
                 location.reload();
             });
+
             $("#submitdel").click(function () {
                 $.ajax({
                     url: "/api/atlas/" + $("#modalid").data("productid"),
@@ -340,6 +377,7 @@
 
                 location.reload();
             });
+            
             if (!RegExp.escape) {
                 RegExp.escape = function (s) {
                     return s.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
