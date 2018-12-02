@@ -4,7 +4,7 @@
     <div class="background" >
         <img style="width: 100%" src="/img/pexelsglo.jpeg">
       </div>
-      <a href="#name"><span class="white-text name">Admin</span></a>
+      <h5><a href="#name"><span class="white-text name">Welcome Back {{username}}</span></a></h5>
       <a href="#email"><span class="white-text email"></span></a>
     </div></li>
     <li>
@@ -12,16 +12,21 @@
             <i class="material-icons" style="margin-right: 8px;">chevron_left</i>
             Return To Atlas</a>
     </li>
+    {{#if admin }}
     <li>
         <a href="/admin">Admin Home</a>
     </li>
-    {{#if admin }}
+
     <li>
         <a href="/admin/products">Manage Products</a>
     </li>
     <li>
         <a href="/admin/users">Manage Users</a>
     </li>
+    {{ else }}
+        <li>
+            <a href="/manage">Manage Markers</a>
+        </li>   
     {{/if }}
     <li>
         <a href="/logout" style="height: 30px; line-height: 30px;" class="waves-effect waves-light btn">Log Out</a>

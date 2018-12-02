@@ -2,7 +2,7 @@
     {{> head }}
 </head>
 <body>
-    {{> adminnav }}
+    {{> managenav }}
     <div class="maincontent">
         {{#if errormessages }}
         <div class="row">
@@ -183,6 +183,11 @@
                         var start =  $('.checkboxes').index(this);
                         var end =  $('.checkboxes').index(lastChecked);
                         $('.checkboxes').slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', lastChecked.checked);
+                    }else if(e.ctrlKey || e.metaKey){
+
+                    }else{
+                        $('.checkboxes').prop('checked', false);
+                        $(this).prop('checked', true);
                     }
                     lastChecked = this;
                 });

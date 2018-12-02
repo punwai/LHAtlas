@@ -7,12 +7,16 @@ module.exports = (app) => {
 
     admin.get('/', (req, res) => {
         if (req.isAuthenticated()) {
-            var successmessage = req.session.successmessage;
-            req.session.successmessage = "";
-            var errormessage = req.session.errormessage;
-            req.session.errormessages = "";
-            res.render('admindash', { admin: req.user.admin, userid: req.user.id, errormessages: errormessage, successmessage: successmessage });
-    } else {
+            if(req.user.admin == true){
+                var successmessage = req.session.successmessage;
+                req.session.successmessage = "";
+                var errormessage = req.session.errormessage;
+                req.session.errormessages = "";
+                res.render('admindash', { admin: req.user.admin, username: req.user.name, userid: req.user.id, errormessages: errormessage, successmessage: successmessage });    
+            }else{
+                res.redirect('/manage');
+            }
+        } else {
             res.render("denied");
         }
     })
@@ -24,7 +28,7 @@ module.exports = (app) => {
                 req.session.successmessage = "";
                 var errormessage = req.session.errormessage;
                 req.session.errormessages = "";    
-                res.render('adminproduct', { admin: req.user.admin, userid: req.user.id, errormessages: errormessage, successmessage: successmessage });
+                res.render('adminproduct', {username: req.user.name, admin: req.user.admin, userid: req.user.id, errormessages: errormessage, successmessage: successmessage });
             } else {
                 res.redirect('/denied');
             }
@@ -40,7 +44,7 @@ module.exports = (app) => {
                 req.session.successmessage = "";
                 var errormessage = req.session.errormessage;
                 req.session.errormessages = "";    
-                res.render('adminusers', { admin: req.user.admin, userid: req.user.id, errormessages: errormessage, successmessage: successmessage });
+                res.render('adminusers', { username: req.user.name, admin: req.user.admin, userid: req.user.id, errormessages: errormessage, successmessage: successmessage });
             } else {
                 res.redirect('/denied');
             }

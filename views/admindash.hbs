@@ -3,7 +3,7 @@
 </head>
 
 <body>
-    {{> adminnav }}
+    {{> managenav }}
 
     <div class="maincontent" >
          {{#if errormessages }}
@@ -341,24 +341,26 @@
                     $("#numberofelements").text($("#tableform input:checkbox:checked").length);
                 });     
 
-                            var lastChecked = null;
+                var lastChecked = null;
 
-            $('.checkboxes').click(function(e) {
-                if(!lastChecked) {
+                $('.checkboxes').click(function(e) {
+                    if(!lastChecked) {
+                        lastChecked = this;
+                        return;
+                    }
+                    console.log('hey');
+                    if(e.shiftKey) {
+                        var start =  $('.checkboxes').index(this);
+                        var end =  $('.checkboxes').index(lastChecked);
+                        $('.checkboxes').slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', lastChecked.checked);
+                    }else if(e.ctrlKey || e.metaKey){
+
+                    }else{
+                        $('.checkboxes').prop('checked', false);
+                        $(this).prop('checked', true);
+                    }
                     lastChecked = this;
-                    return;
-                }
-                console.log('hey');
-                if(e.shiftKey) {
-                    var start =  $('.checkboxes').index(this);
-                    var end =  $('.checkboxes').index(lastChecked);
-
-                    $('.checkboxes').slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', lastChecked.checked);
-
-                }
-
-            lastChecked = this;
-            });
+                });
                 {{/if}}
 
                 $('#submitbatchdel').click(function(){

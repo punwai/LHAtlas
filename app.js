@@ -45,6 +45,21 @@ app.get('/logout', (req, res) => {
   });
 });
 
+app.get('/manage', (req, res) => {
+  if (req.isAuthenticated()) {
+    if(req.body.admin){
+      return res.redirect('/admin');
+    }
+    var successmessage = req.session.successmessage;
+    req.session.successmessage = "";
+    var errormessage = req.session.errormessage;
+    req.session.errormessages = "";
+    res.render('admindash', { admin: req.user.admin, username: req.user.name, userid: req.user.id, errormessages: errormessage, successmessage: successmessage });    
+  } else {
+      res.render("denied");
+  }
+})
+
 app.post('/login', async (req, res, next) => {
   passport.authenticate('login', (err, user, info) => {
     try {
@@ -87,10 +102,14 @@ const googleMapsClient = require('@google/maps').createClient({
 
 app.get('/',(req, res) => {
   var isloggedin = false;
+  var isAdmin = false;
+  var username = false;
   if(req.isAuthenticated()){
     isloggedin = true;
+    isAdmin = req.user.admin;
+    username = req.user.name;
   }
-  res.render('index', {loggedIn: isloggedin});
+  res.render('index', {loggedIn: isloggedin, admin: isAdmin, username: username});
 });
 
 app.get('/signup', (req, res) => {

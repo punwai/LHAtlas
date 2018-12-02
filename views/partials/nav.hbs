@@ -4,7 +4,11 @@
             <ul id="nav-mobile" class="right">
                 {{#if loggedIn }}
                     <li><a href="/logout">Logout</a></li>
-                    <li><a href="/account">Admin</a></li>
+                    {{#if admin }}
+                        <li><a href="/admin">Admin</a></li>
+                    {{ else }}
+                        <li><a href="/manage">Manage</a></li>
+                    {{/if }}
                 {{else}}
                     <li><a href="/login">Login</a></li>
                     <li><a href="/signup">Signup</a></li>
