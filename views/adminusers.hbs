@@ -58,7 +58,7 @@
                     </tbody>
                 </table>
                 </form>
-                <div class='deletebar' style="display: none; border-top: 1px grey solid;">
+                <div class='deletebar' style="display: none; border-top: 1px lightgrey solid;">
                     <div style="margin: 3px;" id="deleteselected" href="#batchdeleteModal" class="modal-trigger btn red waves-effect waves-light">Delete selected</div>
                     <div style="margin: 3px;" id="promoteselected" href="#batchpromoteModal" class="modal-trigger btn green waves-effect waves-light">Promote selected</div>
                     <div style="margin: 3px;" id="demoteselected" href="#batchdemoteModal" class="modal-trigger btn orange waves-effect waves-light">Demote selected</div>
@@ -150,124 +150,87 @@
 
             $.getJSON('/admin/manage/users', (data) => {
                 for (var i = 0; i < data.length; i++) {
-                    var button;
-                    if(data[i].admin){
-                        button = '<div style="margin: 0" class="btndemote btn waves-effect waves-light red modal-trigger" href="#confirmdemote" name="action">Demote</div>'
+                     if(data[i].admin){
+                        button = '<div style="margin: 0" class="btndemote btn waves-effect waves-light red modal-trigger" href="#confirmdemote" name="action">Demote</div><span></span></label>';
                     }else{
-                        button = '<div style="margin: 0" class="btnpromote btn waves-effect waves-light green modal-trigger" href="#confirmpromote" name="action">Promote</div>';
+                        button = '<div style="margin: 0" class="btnpromote btn waves-effect waves-light green modal-trigger" href="#confirmpromote" name="action">Promote</div><span></span></label>';
                     }
                     $('tbody').append(`<tr class="databaseElement modal-trigger" data-productid="${i}" href="#modal1">
                         <td class="first">${data[i].name}</td><td>${data[i].admin}</td>
-                        <td style="padding: 2px;">${button} <p class="right atlascheckboxes" style="margin:0; margin-top: 8px;"><label><input class="checkboxes filled-in right" type="checkbox" name="checkboxes" value="${data[i].id}" id="checkbox-${i}"/><span></span></label></p></td>
+                        <td style="padding: 2px;"><p class="right atlascheckboxes" style="margin:0; margin-top: 8px;"><label><input class="checkboxes filled-in right" type="checkbox" name="checkboxes" value="${data[i].id}" id="checkbox-${i}"/><span></span></label></p></td>
                         </tr>`);
-                }
-
+                }   
                 $('input[type="checkbox"]').change(function(){ 
-                    if ($("#tableform input:checkbox:checked").length > 0) {
-                        $('.deletebar').show()
-                    }else {
-                        $('.deletebar').hide()
-                    }
-                    $("#numberofelements").text($("#tableform input:checkbox:checked").length);
-                });    
+                if ($("#tableform input:checkbox:checked").length > 0) {
+                    $('.deletebar').show()
+                }else {
+                    $('.deletebar').hide()
+                }
+                $("#numberofelements").text($("#tableform input:checkbox:checked").length);
+            });    
 
-                var lastChecked = null;
+            var lastChecked = null;
 
-                $('.checkboxes').click(function(e) {
-                    if(!lastChecked) {
-                        lastChecked = this;
-                        return;
-                    }
-                    console.log('hey');
-                    if(e.shiftKey) {
-                        var start =  $('.checkboxes').index(this);
-                        var end =  $('.checkboxes').index(lastChecked);
-                        $('.checkboxes').slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', lastChecked.checked);
-                    }else if(e.ctrlKey || e.metaKey){
-
-                    }else{
-                        $('.checkboxes').prop('checked', false);
-                        $(this).prop('checked', true);
-                    }
+            $('.checkboxes').click(function(e) {
+                if(!lastChecked) {
                     lastChecked = this;
-                });
+                    return;
+                }
+                console.log('hey');
+                if(e.shiftKey) {
+                    var start =  $('.checkboxes').index(this);
+                    var end =  $('.checkboxes').index(lastChecked);
+                    $('.checkboxes').slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', lastChecked.checked);
+                }else if(e.ctrlKey || e.metaKey){
 
-                $('#submitbatchdel').click(function(){
-                    formdata = $("#tableform").serialize();
-                    $.ajax({
-                        url: "/admin/manage/users",
-                        data: $('.checkboxes:checked').serialize(),
-                        type: 'DELETE',
-                        success: function (data) {
-                            console.log();
-                        }
-                    });
-                    location.reload();
-                });
-
-                $('#submitbatchdemote').click(function(){
-                    formdata = $('.checkboxes:checked').serialize();
-                    formdata += '&toAdmin=0',
-                    $.ajax({
-                        url: `/admin/manage/users`,
-                        data: formdata,
-                        type: 'PUT',
-                        success: function (data) {
-                            console.log();
-                        }
-                    });
-                    location.reload();
-                })
-
-                $('#submitbatchpromote').click(function(){
-                    formdata = $('.checkboxes:checked').serialize();
-                    formdata += '&toAdmin=1',
-                    console.log(formdata);
-                    $.ajax({
-                        url: `/admin/manage/users`,
-                        data: formdata,
-                        type: 'PUT',
-                        success: function (data) {
-                            console.log();
-                        }
-                    });
-                    location.reload();
-                })
-
-                $(".btnpromote").click(function(){
-                    $(".whichuser").text(data[$(this).parent().parent().data("productid")].name);
-                    $("#confirmpromotebtn").unbind('click');
-                    $("#confirmpromotebtn").click(function(){
-                        var formdata = 'toAdmin=1';
-                        $.ajax({
-                            url: `/admin/manage/users/${data[$(this).parent().parent().data("productid")].id}`,
-                            data: formdata,
-                            type: 'PUT',
-                            success: function (data) {
-                                console.log();
-                            }
-                        });
-                        location.reload();
-                    })
-                });
-
-                 $(".btndemote").click(function(){
-                    $(".whichuser").text(data[$(this).parent().parent().data("productid")].name);
-                    $("#confirmdemotebtn").unbind('click');
-                    $("#confirmdemotebtn").click(function(){
-                        var formdata = 'toAdmin=0';
-                        $.ajax({
-                            url: `/admin/manage/users/${data[$(this).parent().parent().data("productid")].id}`,
-                            data: formdata,
-                            type: 'PUT',
-                            success: function (data) {
-                                console.log();
-                            }
-                        });
-                        location.reload();
-                    })
-                });
+                }else{
+                    $('.checkboxes').prop('checked', false);
+                    $(this).prop('checked', true);
+                }
+                lastChecked = this;
             });
+            });
+            $('#submitbatchdel').click(function(){
+                formdata = $("#tableform").serialize();
+                $.ajax({
+                    url: "/admin/manage/users",
+                    data: $('.checkboxes:checked').serialize(),
+                    type: 'DELETE',
+                    success: function (data) {
+                        console.log();
+                    }
+                });
+                location.reload();
+            });
+
+            $('#submitbatchdemote').click(function(){
+                formdata = $('.checkboxes:checked').serialize();
+                formdata += '&toAdmin=0',
+                $.ajax({
+                    url: `/admin/manage/users`,
+                    data: formdata,
+                    type: 'PUT',
+                    success: function (data) {
+                        console.log();
+                    }
+                });
+                location.reload();
+            })
+
+            $('#submitbatchpromote').click(function(){
+                formdata = $('.checkboxes:checked').serialize();
+                formdata += '&toAdmin=1',
+                console.log(formdata);
+                $.ajax({
+                    url: `/admin/manage/users`,
+                    data: formdata,
+                    type: 'PUT',
+                    success: function (data) {
+                        console.log();
+                    }
+                });
+                location.reload();
+            })
         })
     </script>
 </body>

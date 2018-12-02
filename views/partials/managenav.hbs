@@ -35,7 +35,11 @@
 
 <nav class="hide-on-large-only orange">
 <div class="nav-wrapper">
-    <a href="#!" style="font-weight: 500; font-size: 30px;" class="brand-logo">LibreHealth Admin</a>
+    {{#if admin }}
+        <a href="#!" style="font-weight: 500; font-size: 30px;" class="brand-logo">Admin</a>
+    {{ else }}
+        <a href="#!" style="font-weight: 500; font-size: 30px;" class="brand-logo">Manage Markers</a>
+    {{/if }}
     <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
     <ul class="right hide-on-med-and-down">
     <li><a href="sass.html">Sass</a></li>
