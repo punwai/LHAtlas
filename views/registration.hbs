@@ -32,7 +32,7 @@
                             </div>
                             <div class="input-field col s12" style="padding-left:0;">
                                 <i class="login-icons material-icons prefix">lock</i>
-                                <input id="password" type="password" class="form-control" name="password" placeholder="Password">
+                                <input id="confirmpassword" type="password" class="form-control" name="confirmpassword" placeholder="Password">
                                 <label for="password">Confirm Password</label>
                             </div>
                             <div>
@@ -51,11 +51,31 @@
                         rules: {
                             username: {
                                 required: true,
-                                minlength: 5
+                                minlength: 5,
+                                maxlength: 20
                             },
                             password: {
                                 required: true,
-                                minlength: 5
+                                minlength: 5,
+                                maxlength: 20
+                            },
+                            confirmpassword: {
+                                equalTo: "#password"
+                            }
+                        },
+                        messages: {
+                            username: {
+                                required: true,
+                                minlength: "Passwords have to be between 5-20 characters",
+                                maxlength: "Passwords have to be between 5-20 characters"
+                            },
+                            password: {
+                                required: true,
+                                minlength: "Passwords have to be between 5-20 characters",
+                                maxlength: "Passwords have to be between 5-20 characters"
+                            }
+                            confirmpassword: {
+                                equalTo: "Passwords do not match",
                             }
                         }
                     });

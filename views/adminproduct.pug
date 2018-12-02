@@ -1,0 +1,225 @@
+html
+  head
+  body
+    | {{> head }}
+    | {{> adminnav }}
+    .maincontent
+      | {{#if errormessages }}
+      .row
+        .col.s12
+          .card.red.darken-1
+            .card-content.white-text
+              span.card-title ACTION FAILED. ERRORS:
+              |                    {{#each errormessages }}
+              p
+                | {{ this.param }}(val: {{ this.value }}) : {{ this.msg }}
+              |                     {{/each}}
+      |         {{/if }}
+      |         {{#if successmessage }}
+      .row
+        .col.s12
+          .card.green.lighten-1
+            .card-content.white-text
+              span.card-title {{successmessage}} 
+      |         {{/if }}
+      .row(style='margin-top: 0px;')
+        .col.s12
+          .card-panel(style='padding:0px;')
+            table.highlight(style='margin-top : 0; padding: px; ')
+              thead.blue.white-text(style='')
+                tr
+                  th.first ProductID
+                  th Product Name
+                  th
+              tbody#mainproductbody
+          button.btn.waves-effect.waves-light.modal-trigger(href='#addproductmodal', name='action')
+             Add Product
+        .col.s12
+          h5#versiontitle Select Product to Show Version of
+          .card-panel(style='padding: 0')
+            table.highlight(style='margin-top : 0; padding: px; ')
+              thead.blue.white-text(style='')
+                tr
+                  th.first Version ID
+                  th Version Name
+              tbody#versionbody
+          button#addversionbutton.btn.waves-effect.waves-light.modal-trigger(href='#addversionmodal', name='action') Add Version
+    
+    //- MODALS
+    #addproductmodal.modal
+      form#addproductmodal(action='/api/products', method='post')
+        .modal-content
+          h5 Adding New Product
+          br
+          .row.postrow
+            .input-field.col.s12.postrow
+              textarea#location.materialize-textarea(name='name', type='text', data-length='255')
+              label(for='location') Product Name
+          .row.postrow
+            .input-field.col.s12.postrow
+              textarea#location.materialize-textarea(name='description', type='text', data-length='255')
+              label(for='location') Description
+          .row
+            .col.s7
+              .input-field.col.s12
+                input#pcolor(type='color', name='marker_pcolor', value='#e66465')
+                label(style='position: relative', for='editpcolor') Marker Primary Color
+              .input-field.col.s12
+                input#scolor(type='color', name='marker_scolor', value='#e66465')
+                label(style='position: relative', for='editscolor') Marker Secondary Color
+            .col.s5
+              svg#Layer_1(version='1.1', xmlns:cc='http://creativecommons.org/ns#', xmlns:dc='http://purl.org/dc/elements/1.1/', xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#', xmlns='http://www.w3.org/2000/svg', xmlns:xlink='http://www.w3.org/1999/xlink', x='0px', y='0px', viewBox='0 0 24 24', style='enable-background:new 0 0 24 24;', xml:space='preserve')
+                style(type='text/css').
+                  .display0{fill:#E74C3C;}
+                  .display1{fill:#C0392B;}
+                g(transform='translate(0 -1028.4)')
+                  path.display0(d='M12,1028.4c-4.4,0-8,3.6-8,8c0,1.4,0.4,2.8,1,3.9c0.1,0.2,0.2,0.4,0.3,0.6l6.6,11.5l6.6-11.5\
+                  c0.1-0.2,0.2-0.3,0.3-0.5l0.1-0.1c0.6-1.2,1-2.5,1-3.9C20,1032,16.4,1028.4,12,1028.4z M12,1032.4c2.2,0,4,1.8,4,4c0,2.2-1.8,4-4,4\
+                  c-2.2,0-4-1.8-4-4C8,1034.2,9.8,1032.4,12,1032.4z')
+                  path.display1(d='M12,1031.4c-2.8,0-5,2.2-5,5c0,2.8,2.2,5,5,5c2.8,0,5-2.2,5-5C17,1033.6,14.8,1031.4,12,1031.4z')
+        .modal-footer
+          button#productsubmit.btn.waves-effect.waves-light(type='submit')
+            | Submit
+    #editproductmodal.modal
+      form#editproductform
+        .modal-content.row(style='padding-top: 10px; padding-bottom: 0;')
+          h5 Editing Product
+          .input-field.col.s12
+            input#editname.validate(name='name', value='N/A', type='text')
+            label.active(for='editname') Name
+          .input-field.col.s12
+            input#editdescription.validate(name='description', value='N/A', type='text')
+            label.active.browser-default(for='editdescription') Description
+          .row
+            .col.s7
+              .input-field.col.s12
+                input#editpcolor(type='color', name='marker_pcolor', value='#e66465')
+                label(style='position: relative', for='head') Marker Primary Color
+              .input-field.col.s12
+                input#editscolor(type='color', name='marker_scolor', value='#e66465')
+                label(style='position: relative', for='head') Marker Secondary Color
+            .col.s5
+              svg#Layer_1(version='1.1', xmlns:cc='http://creativecommons.org/ns#', xmlns:dc='http://purl.org/dc/elements/1.1/', xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#', xmlns='http://www.w3.org/2000/svg', xmlns:xlink='http://www.w3.org/1999/xlink', x='0px', y='0px', viewBox='0 0 24 24', style='enable-background:new 0 0 24 24;', xml:space='preserve')
+                style(type='text/css').
+                  .display0{fill:#E74C3C;}
+                  .display1{fill:#C0392B;}
+                g(transform='translate(0 -1028.4)')
+                  path.display0(d='M12,1028.4c-4.4,0-8,3.6-8,8c0,1.4,0.4,2.8,1,3.9c0.1,0.2,0.2,0.4,0.3,0.6l6.6,11.5l6.6-11.5\
+                  c0.1-0.2,0.2-0.3,0.3-0.5l0.1-0.1c0.6-1.2,1-2.5,1-3.9C20,1032,16.4,1028.4,12,1028.4z M12,1032.4c2.2,0,4,1.8,4,4c0,2.2-1.8,4-4,4\
+                  c-2.2,0-4-1.8-4-4C8,1034.2,9.8,1032.4,12,1032.4z')
+                  path.display1(d='M12,1031.4c-2.8,0-5,2.2-5,5c0,2.8,2.2,5,5,5c2.8,0,5-2.2,5-5C17,1033.6,14.8,1031.4,12,1031.4z')
+        .modal-footer
+          #producteditsubmit.btn.waves-effect.waves-light
+            | Submit
+    #addversionmodal.modal
+      form#addversionform
+        .modal-content
+          h5 Adding New Product Version
+          br
+          .row.postrow
+            .input-field.col.s12.postrow
+              textarea#location.materialize-textarea(name='name', type='text', data-length='255')
+              label(for='location') Product Version
+        .modal-footer
+          #versionsubmit.btn.waves-effect.waves-light
+            | Submit
+    |     {{!-- JS --}}
+    script.
+      $(document).ready(function(){
+        editpColor = document.querySelector("#editpcolor");
+        editsColor = document.querySelector("#editscolor");
+        
+        $("#editpcolor").val("#E74C3C");
+        $("#editscolor").val("C0392B");
+
+        editpColor.addEventListener("input", updateEditPSVG, false);
+        editpColor.addEventListener("change", updateEditPSVG, false);
+        editpColor.select();
+        
+        editsColor.addEventListener("input", updateEditSSVG, false);
+        editsColor.addEventListener("change", updateEditSSVG, false);
+        editsColor.select();
+
+        addpColor = document.querySelector("#pcolor");
+        addsColor = document.querySelector("#scolor");
+
+        $("#pcolor").val("#E74C3C");
+        $("#scolor").val("#C0392B");
+
+        addpColor.addEventListener("input", updateEditPSVG, false);
+        addpColor.addEventListener("change", updateEditPSVG, false);
+        addpColor.select();
+
+        addsColor.addEventListener("input", updateEditSSVG, false);
+        addsColor.addEventListener("change", updateEditSSVG, false);
+        addsColor.select();
+
+        $("#addversionbutton").hide();
+        function updateEditPSVG(event){
+          var p = $(".display0");
+          if(p){
+            p.css("fill", event.target.value);
+          }
+        }
+        function updateEditSSVG(event){
+          var s = $(".display1");
+          if(s){
+          s.css("fill", event.target.value);
+          }
+        }
+        var productsdata;
+        $.getJSON('/api/products', (data) => {
+
+          productsdata = data;
+          for(var i = 0; i <data.length; i++){
+            $('#mainproductbody').append('<tr class="databaseElement" data-productindex="'+i+'" data-productid="' + data[i].id +'" href="#modal1"><td class="first">'+data[i].id+'</td><td>'+data[i].name+'</td><td style="padding: 2px;"><div style="margin-right: 5px;" href="#editproductmodal" class="editproductbtn modal-trigger btn right waves-effect orange waves-light">EDIT</div></td></tr>');
+          }
+
+          $(".editproductbtn").click(function(){
+          let current = ($(this).parent().parent());
+            $("#editname").val(data[current.data('productindex')].name);
+            $("#editdescription").val(data[current.data('productindex')].description);
+            $("#editpcolor").val(data[current.data('productindex')].marker_pcolor);
+            $("#editscolor").val(data[current.data('productindex')].marker_scolor);
+            $("#editproductmodal").val(current.data('productid'));
+            $(".display0").css("fill", data[current.data('productindex')].marker_pcolor);
+            $(".display1").css("fill", data[current.data('productindex')].marker_scolor);
+          });
+
+          $(".databaseElement").click(function(){
+            $("#addversionmodal").data('productid', $(this).data('productid'))
+            $.getJSON('/api/versions/' + $(this).data('productid'), (versiondata) => {
+              $("#versionbody").empty();
+              for(var j = 0; j <versiondata.length; j++){
+                $("#versionbody").append('<tr class="versionElement" href="#modal1"><td class="first">'+versiondata[j].id+'</td><td>'+versiondata[j].name+'</td></tr>');
+              }
+            });
+            $("#versiontitle").text(data[$(this).data('productindex')].name);
+            $("#addversionbutton").show();
+          });
+        });
+        $("#versionsubmit").click(() => {
+          var formdata = $("#addversionform").serialize();
+          $.ajax({
+            url: "/api/versions/" + $("#addversionmodal").data("productid"),
+            type: 'POST',
+            data: formdata,
+            success: () => {
+            }
+          });
+          location.reload();
+        });
+        $("#producteditsubmit").click(() => {
+          var formdata = $("#editproductform").serialize();
+          $.ajax({
+            url:  "/api/products/" + $("#addversionmodal").data("productid"),
+            type: 'PUT',
+            data: formdata,
+            success: () => {
+            console.log('success!!');
+            }
+          })
+          location.reload();
+        })
+      });
+include footer

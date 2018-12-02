@@ -106,10 +106,15 @@
 
             $.getJSON('/admin/getusers', (data) => {
                 for (var i = 0; i < data.length; i++) {
+                    var button;
+                    if(data[i].admin){
+                        button = '<div style="margin: 0" class="btndemote btn waves-effect waves-light red modal-trigger" href="#confirmdemote" name="action">Demote</div>'
+                    }else{
+                        button = '<div style="margin: 0" class="btnpromote btn waves-effect waves-light green modal-trigger" href="#confirmpromote" name="action">Promote</div>';
+                    }
                     $('tbody').append(`<tr class="databaseElement modal-trigger" data-productid="${i}" href="#modal1">
                         <td class="first">${data[i].name}</td><td>${data[i].admin}</td>
-                        <td><div style="margin: 0" class="btnpromote btn waves-effect waves-light green modal-trigger" href="#confirmpromote" name="action">Promote</div>
-                        <div style="margin: 0; margin-left: 5px;" class="btndemote btn waves-effect waves-light red modal-trigger" href="#confirmdemote" name="action">Demote</div></td>
+                        <td>${button}</td>
                         </tr>`);
                 }
 
