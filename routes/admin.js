@@ -6,8 +6,9 @@ module.exports = (app) => {
 
     admin.get('/', (req, res) => {
         if (req.isAuthenticated()) {
-            console.log(req.user);
-            res.render('admindash', { admin: req.user.admin, userid: req.user.id, errormessages: req.session.errormessages });
+            var errormessage = req.session.errormessages;
+            req.session.errormessages = "";
+            res.render('admindash', { admin: req.user.admin, userid: req.user.id, errormessages: errormessage });
         } else {
             res.render("denied");
         }
@@ -16,7 +17,9 @@ module.exports = (app) => {
     admin.get('/products', (req, res) => {
         if (req.isAuthenticated()) {
             if (req.user.admin) {
-                res.render('adminproduct', { admin: req.user.admin, userid: req.user.id, errormessages: req.session.errormessages });
+                var errormessage = req.session.errormessages;
+                req.session.errormessages = "";
+                res.render('adminproduct', { admin: req.user.admin, userid: req.user.id, errormessages: errormessage });
             } else {
                 res.redirect('/denied');
             }
@@ -27,9 +30,7 @@ module.exports = (app) => {
 
     admin.get('/setadmin/:id', (req,res) => {
         if (req.isAuthenticated()) {
-            console.log('inhere');
             if (req.user.admin) {
-                console.log('inhere');
                 User.update(
                     {admin: 1},
                     {where: {id: req.params.id}}
@@ -67,7 +68,9 @@ module.exports = (app) => {
     admin.get('/manageusers', (req,res) => {
         if (req.isAuthenticated()) {
             if (req.user.admin) {
-                res.render('adminusers', { admin: req.user.admin, userid: req.user.id, errormessages: req.session.errormessages });
+                var errormessage = req.session.errormessages;
+                req.session.errormessages = "";
+                res.render('adminusers', { admin: req.user.admin, userid: req.user.id, errormessages: errormessage });
             } else {
                 res.redirect('/denied');
             }

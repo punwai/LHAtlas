@@ -42,8 +42,9 @@ module.exports = (app) => {
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            req.session.errormessages = errors + "ERRORS!";
-            res.redirect('/admin');
+            req.session.errormessages = errors.array();
+            console.log
+            res.redirect("/admin");
         }else{
             token = getjwttoken(req);
             var creator;
@@ -147,7 +148,7 @@ module.exports = (app) => {
         var token = getjwttoken(req);
         console.log('in');
         if (token) {
-            if (token.admin || req.params.id == token.user._id) {
+            if (token.user.admin || req.params.id == token.user._id) {
                 Atlas.findAll({
                     include: [{
                         model: Version,
@@ -185,8 +186,8 @@ module.exports = (app) => {
         check('email').trim().escape().optional().isLength({ max: 255 }).isEmail(),
         check('patients').trim().optional().isNumeric(),
     ], (req, res) => {
-        token = getjwttoken();
-        if (token.admin) {
+        token = getjwttoken(req);
+        if (token.user.admin) {
             Atlas.update({
                 name: req.body.name,
                 description: req.body.description,

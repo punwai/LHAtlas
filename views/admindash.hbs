@@ -26,16 +26,22 @@
                             </div>
                         </div>
                         <div class="row postrow">
-                            <div class="input-field col s6 postrow">
-                                <textarea id="location" name="location" class="materialize-textarea" type="text"
-                                    data-length="255"></textarea>
-                                <label for="location">Location</label>
+                            <div class="col m6 s12" style="margin: 0; padding: 0;">
+                                <div class="input-field col s9 postrow">
+                                    <textarea id="location" name="location" class="materialize-textarea" type="text"
+                                        data-length="255"></textarea>
+                                    <label for="location">Location</label>
+                                </div>
+                                <div class="col s3">
+                                    <a id="latlong-lookup" class="waves-effect waves-light btn">get lat long</a>
+                                </div>
                             </div>
-                            <div class="input-field col s3 postrow">
+
+                            <div class="input-field col s6 m3 postrow">
                                 <input id="latitude" name="latitude" type="text" data-length="60">
                                 <label for="latitude">Latitude</label>
                             </div>
-                            <div class="input-field col s3 postrow">
+                            <div class="input-field col s6 m3 postrow">
                                 <input id="longitude" name="longitude" type="text" data-length="60">
                                 <label for="longitude">Longitude</label>
                             </div>
@@ -64,10 +70,6 @@
                                 <label for="description">Description</label>
                             </div>
                         </div>
-
-
-                        <a id="latlong-lookup" class="waves-effect waves-light btn">get lat long</a>
-
                         <button class="btn waves-effect waves-light" type="submit" name="action">Submit
                         </button>
                     </div>
