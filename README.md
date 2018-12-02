@@ -17,6 +17,3 @@ issuer = YOUR_SITE_URL
 ```
 
 - Finally, run `npm install` and `npm start` to start the atlas!
-
-### OVERVIEW of API:
-
