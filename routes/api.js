@@ -131,7 +131,7 @@ module.exports = (app) => {
                             }
                         }).then(() => {
                             req.session.successmessage = "Delete Success!";
-                            return res.render('admin');
+                            return res.redirect('admin');
                         })
                     } else {
                         return res.render('denied');
@@ -142,6 +142,24 @@ module.exports = (app) => {
             });
         } else {
             res.render('denied');
+        }
+    });
+
+    apiroute.delete('/atlas/delete/bulkdelete', (req, res) => {
+        var token = getjwttoken(req);
+        if (token) {
+            if(token.user.admin){
+                Atlas.destroy({
+                    where: {
+                        id: req.body.checkboxes
+                    }
+                }).then(() => {
+                    req.session.successmessage = "Delete Success!";
+                    res.redirect('/admin');
+                })
+            }
+        }else{
+            return res.json(req.body);
         }
     });
 
@@ -188,6 +206,7 @@ module.exports = (app) => {
         check('email').trim().escape().optional().isLength({ max: 255 }).withMessage('must be less than 255 chars long').isEmail().withMessage('must be an email'),
         check('patients').trim().optional().isNumeric().withMessage('must be numeric'),
     ], (req, res) => {
+        const errors = validationResult(req);
         if (!errors.isEmpty()) {
             req.session.errormessages = errors.array();
             res.redirect("/admin");

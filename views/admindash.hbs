@@ -103,33 +103,38 @@
                     </div>
                 </div>
             </form>
+        </div>
 
             {{!-- TABLE --}}
-            <div class="row" style="margin-top: 0px; margin-bottom: 2px;">
-                <div class="col s12">
-                    <div class="card-panel" style="padding:0px;">
-                        <table class="highlight fixed_header" style="margin-top : 0; ">
-                            <thead style="" class="blue white-text">
-                                <th class="first">Name</th>
-                                    <th style="padding:4px;">
-                                        <div class="nav-wrapper">
-                                            <div class="input-field searchinput">
-                                            <input id="search" type="search" required>
-                                            <label class="label-icon" for="search"><i class="material-icons">search</i></label>
-                                            <i class="material-icons">close</i>
-                                            </div>
-                                        </div>
-                                    </th>
-                            </thead>
+        <div class="row" style="margin-top: 0px; margin-bottom: 2px;">
+            <div class="col s12">
+                <div class="card-panel" style="padding:0px;">
+                    <form id="tableform" style="margin: 0">
+                   <table class="highlight fixed_header" style="margin-top : 0; ">
+                        <thead style="" class="blue white-text">
+                            <th class="first">Name</th>
+                            <th style="padding:4px;">
+                                <div class="nav-wrapper">
+                                    <div class="input-field searchinput">
+                                    <input id="search" type="search" required>
+                                    <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                                    <i class="material-icons">close</i>
+                                    </div>
+                                </div>
+                            </th>
+                        </thead>
                             <tbody>
-
                             </tbody>
-                        </table>
+                    </table>
+                    </form>
+                    <div class='deletebar' style="display: none; border-top: 1px grey solid;">
+                        <div style="margin: 3px;" id="deleteselected" href="#batchdeleteModal" class="modal-trigger btn red waves-effect waves-light">Delete selected</div>
                     </div>
-
                 </div>
+
             </div>
         </div>
+    </div>
         {{!-- MODALS --}}
         <div id="modal1" class="modal" style="max-height: 3000px;">
             <form id="updateform">
@@ -204,6 +209,18 @@
             </div>
         </div>
 
+        <div id="batchdeleteModal" style="margin-top: 20%; width: 440px;" class="modal">
+            <div class="modal-content" style="padding-bottom: 0;">
+                <span class="red-text" style="font-size: 26px; font-weight: 500">WARNING!</span>
+                <p style="font-size: 26px; margin-bottom: 5px; margin-top: 10px;">Are you sure you want to <span class="red-text"
+                        style="font-weight: 500">DELETE</span> <span id="numberofelements" class="teal-text"></span> element(s)?</p>
+            </div>
+            <div class="modal-footer">
+                <div href="" id="submitbatchdel" class="modal-close waves-effect waves-green btn-flat">Yes I am sure</div>
+                <div class="modal-close waves-effect waves-green btn-flat" onclick="$('#deleteModal').modal('close'); return false;">Cancel</div>
+            </div>
+        </div>
+
         <div id="editModal" style="margin-top: 20%; width: 440px;" class="modal">
             <div class="modal-content" style="padding-bottom: 0;">
                 <span class="red-text" style="font-size: 26px; font-weight: 500">WARNING!</span>
@@ -215,9 +232,6 @@
                 <div class="modal-close waves-effect waves-green btn-flat" onclick="$('#editModal').modal('close'); return false;">Cancel</div>
             </div>
         </div>
-
-    </div>
-
     {{!-- JS --}}
     <script>
         $(document).ready(function () {
@@ -249,17 +263,26 @@
                         minlength: 3
                     },
                     latitude: {
-                        required: true
+                        required: true,
+                        number: true
                     },
                     longitude: {
-                        required: true
+                        required: true,
+                        number: true
                     },
                     email: {
                         email: true
                     },
+                    website: {
+                        url: true
+                    },
+                    patients:{
+                        number: true
+                    }
 
                 }
             });
+
 
             $('#updateform').validate({ // initialize the plugin
                 rules: {
@@ -268,13 +291,21 @@
                         minlength: 3
                     },
                     latitude: {
-                        required: true
+                        required: true,
+                        number: true
                     },
                     longitude: {
-                        required: true
+                        required: true,
+                        number: true
                     },
                     email: {
                         email: true
+                    },
+                    website: {
+                        url: true
+                    },
+                    patients:{
+                        number: true
                     }
                 }
             });
@@ -286,9 +317,46 @@
             {{/if}}
 
                 querieddata = data;
+                var checkboxhtml  = "";
                 for (var i = 0; i < data.length; i++) {
-                    $('tbody').append('<tr class="databaseElement modal-trigger" data-productid="' + i + '" href="#modal1"><td class="first">' + data[i].name + '</td><td></td></tr>');
+                    {{#if admin }}
+                        checkboxhtml = `<p class="right atlascheckboxes" style="margin:0"><label><input class="checkboxes filled-in right" type="checkbox" name="checkboxes" value="${data[i].id}" id="checkbox-${i}"/><span></span></label></p>`
+                    {{/if }}
+                    $('tbody').append(`<tr class="databaseElement modal-trigger" data-productid="${i}" href="#modal1">
+                        <td class="first">${data[i].name}</td>
+                        <td>${checkboxhtml}</td></tr>`);
                 }
+                $(".atlascheckboxes").on("click", function (e) {
+                    e.stopPropagation();
+                });
+                {{#if admin }}
+                $('input[type="checkbox"]').change(function(){ 
+                    if ($("#tableform input:checkbox:checked").length > 0) {
+                        console.log('inshow')
+                        $('.deletebar').show()
+                    }else {
+                        console.log('inhide')
+                        $('.deletebar').hide()
+                    }
+                    $("#numberofelements").text($("#tableform input:checkbox:checked").length);
+                });     
+                {{/if}}
+
+                $('#submitbatchdel').click(function(){
+                    formdata = $("#tableform").serialize();
+                    console.log(formdata);
+                    $.ajax({
+                        url: "/api/atlas/delete/bulkdelete",
+                        data: $('.checkboxes:checked').serialize(),
+                        type: 'DELETE',
+                        success: function (data) {
+                            console.log();
+                        }
+                    });
+                    location.reload();
+                })
+
+
                 $(".databaseElement").click(function () {
                     $("#modalid").text("Entry ID: " + data[$(this).data('productid')].id);
                     $("#modalid").data('productid', data[$(this).data('productid')].id);

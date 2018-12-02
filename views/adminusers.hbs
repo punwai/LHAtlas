@@ -37,6 +37,7 @@
         <div class="row" style="margin-top: 0px; margin-bottom: 2px;">
         <div class="col s12">
             <div class="card-panel" style="padding:0px;">
+                <form action="" style="margin: 0" id="tableform">
                 <table class="highlight fixed_header" style="margin-top : 0; ">
                     <thead style="" class="blue white-text">
                         <th class="first">Username</th>
@@ -56,6 +57,13 @@
                     <tbody>
                     </tbody>
                 </table>
+                </form>
+                <div class='deletebar' style="display: none; border-top: 1px grey solid;">
+                    <div style="margin: 3px;" id="deleteselected" href="#batchdeleteModal" class="modal-trigger btn red waves-effect waves-light">Delete selected</div>
+                    <div style="margin: 3px;" id="promoteselected" href="#batchpromoteModal" class="modal-trigger btn green waves-effect waves-light">Promote selected</div>
+                    <div style="margin: 3px;" id="demoteselected" href="#batchdemoteModal" class="modal-trigger btn orange waves-effect waves-light">Demote selected</div>
+
+                </div>
             </div>
         </div>
     </div>
@@ -83,6 +91,42 @@
         <div class="modal-footer">
             <a id="confirmpromotebtn" href=""><div class="btn waves-effect waves-light green">Yes I am sure</div></a>
             <div class="modal-close btn waves-effect waves-light btn-flat" onclick="$('#deleteModal').modal('close'); return false;">Cancel</div>
+        </div>
+    </div>
+
+    <div id="batchdeleteModal" style="margin-top: 20%; width: 440px;" class="modal">
+        <div class="modal-content" style="padding-bottom: 0;">
+            <span class="red-text" style="font-size: 26px; font-weight: 500">WARNING!</span>
+            <p style="font-size: 26px; margin-bottom: 5px; margin-top: 10px;">Are you sure you want to <span class="red-text"
+                    style="font-weight: 500">DELETE</span> <span class="numberofelements" class="teal-text"></span> element(s)?</p>
+        </div>
+        <div class="modal-footer">
+            <div href="" id="submitbatchdel" class="modal-close waves-effect waves-green btn-flat">Yes I am sure</div>
+            <div class="modal-close waves-effect waves-green btn-flat" onclick="$('#deleteModal').modal('close'); return false;">Cancel</div>
+        </div>
+    </div>
+
+    <div id="batchpromoteModal" style="margin-top: 20%; width: 440px;" class="modal">
+        <div class="modal-content" style="padding-bottom: 0;">
+            <span class="red-text" style="font-size: 26px; font-weight: 500">WARNING!</span>
+            <p style="font-size: 26px; margin-bottom: 5px; margin-top: 10px;">Are you sure you want to <span class="green-text"
+                    style="font-weight: 500">PROMOTE</span> <span class="numberofelements" class="teal-text"></span> element(s)?</p>
+        </div>
+        <div class="modal-footer">
+            <div href="" id="submitbatchpromote" class="modal-close waves-effect waves-green btn-flat">Yes I am sure</div>
+            <div class="modal-close waves-effect waves-green btn-flat" onclick="$('#deleteModal').modal('close'); return false;">Cancel</div>
+        </div>
+    </div>
+
+    <div id="batchdemoteModal" style="margin-top: 20%; width: 440px;" class="modal">
+        <div class="modal-content" style="padding-bottom: 0;">
+            <span class="red-text" style="font-size: 26px; font-weight: 500">WARNING!</span>
+            <p style="font-size: 26px; margin-bottom: 5px; margin-top: 10px;">Are you sure you want to <span class="red-text"
+                    style="font-weight: 500">DEMOTE</span> <span class="numberofelements" class="teal-text"></span> element(s)?</p>
+        </div>
+        <div class="modal-footer">
+            <div href="" id="submitbatchdemote" class="modal-close waves-effect waves-green btn-flat">Yes I am sure</div>
+            <div class="modal-close waves-effect waves-green btn-flat" onclick="$('#deleteModal').modal('close'); return false;">Cancel</div>
         </div>
     </div>
 
@@ -114,9 +158,80 @@
                     }
                     $('tbody').append(`<tr class="databaseElement modal-trigger" data-productid="${i}" href="#modal1">
                         <td class="first">${data[i].name}</td><td>${data[i].admin}</td>
-                        <td>${button}</td>
+                        <td style="padding: 2px;">${button} <p class="right atlascheckboxes" style="margin:0; margin-top: 8px;"><label><input class="checkboxes filled-in right" type="checkbox" name="checkboxes" value="${data[i].id}" id="checkbox-${i}"/><span></span></label></p></td>
                         </tr>`);
                 }
+
+                $('input[type="checkbox"]').change(function(){ 
+                    if ($("#tableform input:checkbox:checked").length > 0) {
+                        $('.deletebar').show()
+                    }else {
+                        $('.deletebar').hide()
+                    }
+                    $("#numberofelements").text($("#tableform input:checkbox:checked").length);
+                });    
+
+                var lastChecked = null;
+
+                $('.checkboxes').click(function(e) {
+                    if(!lastChecked) {
+                        lastChecked = this;
+                        return;
+                    }
+                    console.log('hey');
+                    if(e.shiftKey) {
+                        var start =  $('.checkboxes').index(this);
+                        var end =  $('.checkboxes').index(lastChecked);
+
+                        $('.checkboxes').slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', lastChecked.checked);
+
+                    }
+
+                    lastChecked = this;
+                });
+
+                $('#submitbatchdel').click(function(){
+                    formdata = $("#tableform").serialize();
+                    console.log(formdata);
+                    $.ajax({
+                        url: "/admin/batchdeleteusers",
+                        data: $('.checkboxes:checked').serialize(),
+                        type: 'DELETE',
+                        success: function (data) {
+                            console.log();
+                        }
+                    });
+                    location.reload();
+                });
+
+                $('#submitbatchdemote').click(function(){
+                    formdata = $("#tableform").serialize();
+                    console.log(formdata);
+                    $.ajax({
+                        url: "/admin/batchdemote",
+                        data: $('.checkboxes:checked').serialize(),
+                        type: 'POST',
+                        success: function (data) {
+                            console.log();
+                        }
+                    });
+                    location.reload();
+                })
+
+                $('#submitbatchpromote').click(function(){
+                    formdata = $("#tableform").serialize();
+                    console.log(formdata);
+                    $.ajax({
+                        url: "/admin/batchpromote",
+                        data: $('.checkboxes:checked').serialize(),
+                        type: 'POST',
+                        success: function (data) {
+                            console.log();
+                        }
+                    });
+                    location.reload();
+                })
+
 
                 $(".btnpromote").click(function(){
                     $(".whichuser").text(data[$(this).parent().parent().data("productid")].name);
