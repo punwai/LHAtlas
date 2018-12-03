@@ -80,7 +80,7 @@ app.post('/login', async (req, res, next) => {
           user: body,
         }, app.get('Secret'),
           {
-            expiresIn: 30 * 60,
+            expiresIn: 60 * 60,
             issuer: app.get('Issuer'),
           }
         );

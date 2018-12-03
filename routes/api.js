@@ -29,6 +29,10 @@ module.exports = (app) => {
         next();
     }
 
+    apiroute.get('/token', (req,res) => {
+        
+    })
+
     apiroute.post('/atlas', [
         emptyString,
         check('name').trim().escape().isLength({ min: 3, max: 255 }).withMessage('must be between 3 and 255 chars long'),
