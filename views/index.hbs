@@ -46,7 +46,7 @@
     <div id="legend" class="card-panel" style="position: absolute; right: -500px;min-width: 200px; bottom: 10px; background: rgba(255,255,255,1); width: 24%; z-index: 20;">
         <h5 style="font-size: 20px; font-weight: 600; text-align: center;">LEGEND</h5>
     </div>
-    <span id="logospan" style="position: absolute; z-index: 4; top: 48px; left: -600px;"><img style="width: 30%; min-width: 300px;"
+    <span id="logospan" style="position: absolute; z-index: 4; width: 25%; top: 48px; left: -600px;"><img style="width: 100%; min-width: 300px;"
             src="/img/atlaslogo.png" alt=""></span>
     <div id="map" class='custom-popup'>
     </div>
@@ -74,6 +74,7 @@
                 accessToken: 'pk.eyJ1IjoicHVud2FpIiwiYSI6ImNqb3c2eDV2MzAxM24za3BncmwwNmVqenQifQ._RX19AH6qY0c1r0YiM8Xag'
             }).addTo(mymap);
             var marker;
+
             $.getJSON('/getproducts', (productdata)  => {
                 var colormap = {};
                 for (var i = 0; i < productdata.length; i++) {
