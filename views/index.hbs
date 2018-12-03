@@ -56,6 +56,7 @@
                 $("#infobox").hide();
             })
             $("#infobox").hide();
+
             var myLatLng = { lat: 20, lng: -20 };
 
             var markerTemplate = L.Icon.extend({
@@ -92,7 +93,7 @@
                     right: '10px',
                 }, 1200);
                 $("#logospan").animate({
-                    left: '100px',
+                    left: '10%',
                 }, 1200);
 
                 $.getJSON('/getlocations', (data) => {
