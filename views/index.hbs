@@ -43,10 +43,10 @@
 <body>
     {{> nav }}
 
-    <div id="legend" class="card-panel" style="position: absolute; right: -500px;min-width: 200px; bottom: 10px; background: rgba(255,255,255,1); width: 24%; z-index: 20;">
+    <div id="legend" class="card-panel" style="position: absolute; right: -500px;min-width: 170px; max-width: 230px; bottom: 10px; background: rgba(255,255,255,1); width: 24%; z-index: 20;">
         <h5 style="font-size: 20px; font-weight: 600; text-align: center;">LEGEND</h5>
     </div>
-    <span id="logospan" style="position: absolute; z-index: 4; width: 25%; top: 48px; left: -600px;"><img style="width: 100%; min-width: 300px;"
+    <span id="logospan" style="position: absolute; z-index: 4; width: 15%; top: 48px; left: -600px;"><img style="width: 100%; min-width: 300px;"
             src="/img/atlaslogo.png" alt=""></span>
     <div id="map" class='custom-popup'>
     </div>
@@ -80,11 +80,11 @@
                 var colormap = {};
                 for (var i = 0; i < productdata.length; i++) {
                     $("#legend").append('<div class="row valign-wrapper">'
-                        + '<div class="col s9">'
-                        + '<h5 class="legendtitles" style="margin: 0;">' + productdata[i].name + '</h5>'
+                        + '<div class="col s9" style="padding-left: 0;">'
+                        + '<h5 class="legendtitles" style="font-size: 15px; margin: 0;">' + productdata[i].name + '</h5>'
                         + '</div>'
                         + '<div class="col s3">'
-                        + '<svg style="width: 40px" version="1.1" id="Layer_1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">'
+                        + '<svg style="width: 30px" version="1.1" id="Layer_1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">'
                         + '<g transform="translate(0 -1028.4)"><path style="fill: ' + productdata[i].marker_pcolor + '" d="M12,1028.4c-4.4,0-8,3.6-8,8c0,1.4,0.4,2.8,1,3.9c0.1,0.2,0.2,0.4,0.3,0.6l6.6,11.5l6.6-11.5c0.1-0.2,0.2-0.3,0.3-0.5l0.1-0.1c0.6-1.2,1-2.5,1-3.9C20,1032,16.4,1028.4,12,1028.4z M12,1032.4c2.2,0,4,1.8,4,4c0,2.2-1.8,4-4,4c-2.2,0-4-1.8-4-4C8,1034.2,9.8,1032.4,12,1032.4z"/><path style="fill: ' + productdata[i].marker_scolor + '" d="M12,1031.4c-2.8,0-5,2.2-5,5c0,2.8,2.2,5,5,5c2.8,0,5-2.2,5-5C17,1033.6,14.8,1031.4,12,1031.4z"/></g></svg>'
                         + '</div></div>');
                     colormap[productdata[i].id] = [productdata[i].marker_pcolor, productdata[i].marker_scolor];
