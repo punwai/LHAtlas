@@ -17,3 +17,6 @@ issuer = YOUR_SITE_URL
 ```
 
 - Finally, run `npm install` and `npm start` to start the atlas!
+
+#### Creating Admin
+To be able to create the first admin, create a user using signup then edit the database so that the admin property of that user becomes 1. After that, this user can promote/demote new users and create products.
